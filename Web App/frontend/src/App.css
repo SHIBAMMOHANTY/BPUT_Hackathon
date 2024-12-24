@@ -1,7 +1,10 @@
 .App {
   text-align: center;
 }
-
+html, body, #root {
+  height: 100%;
+  margin: 0; /* Removes default margin */
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;
