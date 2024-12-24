@@ -8,8 +8,8 @@ import Login from './components/Login';
 function App() {
   return (
     <>
-      <SignUp />
-      <Login />
+      {/* <SignUp /> */}
+      {/* <Login /> */}
       {/* <Welcome/> */}
     </>
   );

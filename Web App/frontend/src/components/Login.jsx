@@ -1,7 +1,25 @@
 import React, { useState } from "react";
 
 const Login = () => {
-  const [userType, setUserType] = useState("business"); // Default to Business Users
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(formData);
+    // Handle form submission logic here
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 flex items-center justify-center px-6 py-12">
@@ -9,34 +27,15 @@ const Login = () => {
         <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
           Login to EbizA
         </h2>
-        <div className="flex justify-around mb-4">
-          <button
-            className={`px-4 py-2 rounded-md font-medium ${
-              userType === "business"
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200 text-gray-800"
-            }`}
-            onClick={() => setUserType("business")}
-          >
-            Business User
-          </button>
-          <button
-            className={`px-4 py-2 rounded-md font-medium ${
-              userType === "investor"
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200 text-gray-800"
-            }`}
-            onClick={() => setUserType("investor")}
-          >
-            Investor / NGO
-          </button>
-        </div>
-        <form>
+        <form onSubmit={handleSubmit}>
           <label className="block text-sm font-medium text-gray-700">
             Email Address
           </label>
           <input
             type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
             placeholder="Enter your email"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:outline-none mt-1"
           />
@@ -45,7 +44,21 @@ const Login = () => {
           </label>
           <input
             type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
             placeholder="Enter your password"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:outline-none mt-1"
+          />
+          <label className="block text-sm font-medium text-gray-700 mt-4">
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            placeholder="Confirm your password"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:outline-none mt-1"
           />
           <div className="text-right mt-2">

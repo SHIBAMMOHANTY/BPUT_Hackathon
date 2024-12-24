@@ -62,26 +62,33 @@ const SignUp = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-300 focus:outline-none mt-1"
           />
 
-          {/* Disabilities Radio Buttons */}
-          <label className="block text-sm font-medium text-gray-700 mt-4">
-            Types of Disabilities
-          </label>
-          <div className="mt-2">
-            {disabilityTypes.map((type) => (
-              <div key={type} className="flex items-center mb-2">
-                <input
-                  type="radio"
-                  id={type}
-                  name="disabilityType"
-                  value={type}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                />
-                <label htmlFor={type} className="ml-2 block text-sm text-gray-700">
-                  {type}
-                </label>
+          {/* Disabilities Radio Buttons - Shown Only for Business Users */}
+          {userType === "business" && (
+            <>
+              <label className="block text-sm font-medium text-gray-700 mt-4">
+                Types of Disabilities
+              </label>
+              <div className="mt-2">
+                {disabilityTypes.map((type) => (
+                  <div key={type} className="flex items-center mb-2">
+                    <input
+                      type="radio"
+                      id={type}
+                      name="disabilityType"
+                      value={type}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    />
+                    <label
+                      htmlFor={type}
+                      className="ml-2 block text-sm text-gray-700"
+                    >
+                      {type}
+                    </label>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
 
           {/* Submit Button */}
           <button
