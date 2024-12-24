@@ -2,6 +2,8 @@ import React, { useState } from "react";
 
 const SignUp = () => {
   const [userType, setUserType] = useState("business");
+  const [disabilityType, setDisabilityType] = useState("");
+  const [comment, setComment] = useState("");
   const disabilityTypes = [
     "Visual Impairment",
     "Hearing Impairment",
@@ -62,9 +64,10 @@ const SignUp = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-300 focus:outline-none mt-1"
           />
 
-          {/* Disabilities Radio Buttons - Shown Only for Business Users */}
+          {/* Display Disability Options only for Business User */}
           {userType === "business" && (
             <>
+              {/* Disabilities Radio Buttons */}
               <label className="block text-sm font-medium text-gray-700 mt-4">
                 Types of Disabilities
               </label>
@@ -76,17 +79,32 @@ const SignUp = () => {
                       id={type}
                       name="disabilityType"
                       value={type}
+                      checked={disabilityType === type}
+                      onChange={(e) => setDisabilityType(e.target.value)}
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
                     />
-                    <label
-                      htmlFor={type}
-                      className="ml-2 block text-sm text-gray-700"
-                    >
+                    <label htmlFor={type} className="ml-2 block text-sm text-gray-700">
                       {type}
                     </label>
                   </div>
                 ))}
               </div>
+
+              {/* Comment Box for 'Other' Disability Type */}
+              {disabilityType === "Other" && (
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Please describe the disability
+                  </label>
+                  <textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Enter additional details"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-300 focus:outline-none mt-1"
+                    rows="4"
+                  />
+                </div>
+              )}
             </>
           )}
 

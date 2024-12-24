@@ -9,7 +9,7 @@ function App() {
   return (
     <>
       {/* <SignUp /> */}
-      {/* <Login /> */}
+      <Login />
       {/* <Welcome/> */}
     </>
   );
