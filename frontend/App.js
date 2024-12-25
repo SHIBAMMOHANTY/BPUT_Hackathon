@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Events from './pages/Events';
 import Project from './pages/Project';
+import Profile from './pages/Profile';
 
 // Create Navigators
 const Drawer = createDrawerNavigator();
@@ -71,7 +72,8 @@ const DrawerNavigator = () => {
       <Drawer.Screen name="My Profile">
         {() => (
           <View style={styles.screen}>
-            <Text style={styles.routeName}>My Profile</Text>
+            {/* <Text style={styles.routeName}>My Profile</Text> */}
+            <Profile />
           </View>
         )}
       </Drawer.Screen>
