@@ -1,32 +1,20 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet } from 'react-native';
 
 import Home from './pages/Home';
-import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
 import Events from './pages/Events';
-import SignUp from './pages/Signup';
-import Login from './pages/Login';
 import Project from './pages/Project';
 
-const Stack = createStackNavigator();
+// Create Navigators
+const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 
-// Stack Navigator for Login, Sign Up, Profile
-const AuthStack = () => {
-  return (
-    <Stack.Navigator initialRouteName="Login">
-      <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="SignUp" component={SignUp} />
-      <Stack.Screen name="Profile" component={Profile} />
-    </Stack.Navigator>
-  );
-};
-
-// Bottom Tab Navigator for main app screens
+// Main Bottom Tab Navigator
 const MainTabNavigator = () => {
   return (
     <Tab.Navigator
@@ -39,9 +27,12 @@ const MainTabNavigator = () => {
             iconName = 'analytics';
           } else if (route.name === 'Events') {
             iconName = 'calendar';
+          } else if (route.name === 'Project') {
+            iconName = 'briefcase';
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
+        headerShown: false, // Hide header for bottom tab screens
       })}
       tabBarOptions={{
         activeTintColor: '#6366f1',
@@ -56,13 +47,59 @@ const MainTabNavigator = () => {
   );
 };
 
+// Drawer Navigator (Hamburger Menu)
+const DrawerNavigator = () => {
+  return (
+    <Drawer.Navigator>
+      {/* Drawer Screen for MainTabNavigator */}
+      <Drawer.Screen name="Home" component={MainTabNavigator} />
+      {/* Additional Drawer Screens */}
+      <Drawer.Screen name="Language Support">
+        {() => (
+          <View style={styles.screen}>
+            <Text style={styles.routeName}>Language Support</Text>
+          </View>
+        )}
+      </Drawer.Screen>
+      <Drawer.Screen name="Help & Support">
+        {() => (
+          <View style={styles.screen}>
+            <Text style={styles.routeName}>Help & Support</Text>
+          </View>
+        )}
+      </Drawer.Screen>
+      <Drawer.Screen name="My Profile">
+        {() => (
+          <View style={styles.screen}>
+            <Text style={styles.routeName}>My Profile</Text>
+          </View>
+        )}
+      </Drawer.Screen>
+    </Drawer.Navigator>
+  );
+};
+
+// App Component - Entry Point
 const App = () => {
   return (
     <NavigationContainer>
-      {/* <AuthStack /> Use AuthStack for Login, Sign Up, Profile */}
-      <MainTabNavigator /> Uncomment for main app navigation
+      <DrawerNavigator /> {/* Drawer Navigator wrapped around Main Tab */}
     </NavigationContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f8f9fa',
+  },
+  routeName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+});
 
 export default App;
