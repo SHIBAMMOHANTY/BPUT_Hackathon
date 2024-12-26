@@ -3,13 +3,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Events from './pages/Events';
 import Project from './pages/Project';
 import Profile from './pages/Profile';
+import Notification from './pages/Notification';
 
 // Create Navigators
 const Drawer = createDrawerNavigator();
@@ -51,7 +52,19 @@ const MainTabNavigator = () => {
 // Drawer Navigator (Hamburger Menu)
 const DrawerNavigator = () => {
   return (
-    <Drawer.Navigator>
+    <Drawer.Navigator
+      screenOptions={({ navigation }) => ({
+        // Add notification icon to the header
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Notifications')}
+            style={{ marginRight: 15 }}
+          >
+            <Ionicons name="notifications-outline" size={24} color="black" />
+          </TouchableOpacity>
+        ),
+      })}
+    >
       {/* Drawer Screen for MainTabNavigator */}
       <Drawer.Screen name="Home" component={MainTabNavigator} />
       {/* Additional Drawer Screens */}
@@ -72,8 +85,14 @@ const DrawerNavigator = () => {
       <Drawer.Screen name="My Profile">
         {() => (
           <View style={styles.screen}>
-            {/* <Text style={styles.routeName}>My Profile</Text> */}
             <Profile />
+          </View>
+        )}
+      </Drawer.Screen>
+      <Drawer.Screen name="Notifications">
+        {() => (
+          <View style={styles.screen}>
+            <Notification />
           </View>
         )}
       </Drawer.Screen>
