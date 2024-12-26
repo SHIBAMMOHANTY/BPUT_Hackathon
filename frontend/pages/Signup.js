@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, Button, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const SignupScreen = () => {
+const SignupScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('');
@@ -66,7 +66,7 @@ const SignupScreen = () => {
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.loginLink} onPress={() => {/* Navigate to Login */}}>
+      <TouchableOpacity style={styles.loginLink} onPress={() => navigation.navigate('Login')}>
         <Text style={styles.linkText}>Already have an account? Login</Text>
       </TouchableOpacity>
     </View>

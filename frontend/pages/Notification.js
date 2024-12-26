@@ -1,61 +1,80 @@
-// import React from 'react';
-// import { View, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Linking, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-// const Events = () => {
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.title}>Upcoming Notification</Text>
-//     </View>
-//   );
-// };
+const NotificationScreen = () => {
+  const [notifications, setNotifications] = useState([]);
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     backgroundColor: '#f3f4f6',
-//   },
-//   title: {
-//     fontSize: 24,
-//     fontWeight: 'bold',
-//   },
-// });
+  // Dummy notifications data (replace this with real API response)
+  const dummyNotifications = [
+    {
+      id: '1',
+      title: 'Welcome to EbizA!',
+      message: 'We’re excited to have you onboard. Explore our platform to get started.',
+      timestamp: '2024-12-26 10:00 AM',
+    },
+    {
+      id: '2',
+      title: 'Important Update!',
+      message: 'A new version of the platform is available. Please update your app for a better experience.',
+      timestamp: '2024-12-25 08:30 PM',
+    },
+    {
+      id: '3',
+      title: 'Campaign Alert!',
+      message: 'Check out the new campaign opportunities for NGOs and businesses in your region.',
+      timestamp: '2024-12-24 02:15 PM',
+    },
+  ];
 
-// export default Events;
+  // Simulate fetching notifications from a backend (useEffect)
+  useEffect(() => {
+    // Simulate an API call with a delay
+    setTimeout(() => {
+      // Here you would replace the dummy data with your actual API call like:
+      // fetch('your-api-endpoint')
+      //   .then((response) => response.json())
+      //   .then((data) => setNotifications(data))
+      //   .catch((error) => console.error('Error fetching notifications:', error));
 
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+      setNotifications(dummyNotifications); // Using dummy data for now
+    }, 1000);
+  }, []);
 
+  const renderItem = ({ item }) => (
+    <View style={styles.notificationItem}>
+      <View style={styles.iconContainer}>
+        <Ionicons name="notifications-outline" size={24} color="#3498db" />
+      </View>
+      <View style={styles.textContainer}>
+        <Text style={styles.notificationTitle}>{item.title}</Text>
+        <Text style={styles.notificationMessage}>{item.message}</Text>
+        <Text style={styles.notificationTime}>{item.timestamp}</Text>
+      </View>
+    </View>
+  );
 
-const WelcomeScreen = ({ navigation }) => {
+  // Function to handle notification click (e.g., open specific page)
+  const handleNotificationClick = (notification) => {
+    Alert.alert('Notification clicked!', `You clicked on: ${notification.title}`);
+    // Navigate or perform actions based on notification (e.g., go to a detailed page)
+  };
+
   return (
     <View style={styles.container}>
-      <Image 
-    source={require('../assets/ebiza.png')} // Correct way to load local image
-    style={styles.logo}
-  />
-
-      <Text style={styles.welcomeText}>Welcome to EbizA</Text>
-      <Text style={styles.subtitle}>Connecting investors, NGOs, and businesses for social impact</Text>
-
-      {/* Get Started Button */}
-      <TouchableOpacity 
-        style={styles.button} 
-        onPress={() => navigation.navigate('Signup')}
-        
-      >
-        <Text style={styles.buttonText}>Get Started</Text>
-
-      </TouchableOpacity>
-
-      {/* Login Redirect Button */}
-      <TouchableOpacity 
-        style={styles.secondaryButton} 
-        onPress={() => navigation.navigate('Login')} // Navigate to Login screen
-      >
-        <Text style={styles.secondaryButtonText}>Already have an account? Login</Text>
-      </TouchableOpacity>
+      <FlatList
+        data={notifications}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+        refreshing={false}
+        onRefresh={() => {}}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No notifications available at the moment.</Text>
+          </View>
+        }
+      />
     </View>
   );
 };
@@ -63,57 +82,58 @@ const WelcomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#f7f9fc',
-    padding: 20,
+    paddingTop: 20,
+    paddingHorizontal: 15,
   },
-  logo: {
-    width: 150,
-    height: 150,
-    marginBottom: 30,
-    borderRadius: 15,
-    backgroundColor: '#ddd',
+  list: {
+    paddingBottom: 20,
   },
-  welcomeText: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#2C3E50',
+  notificationItem: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 10,
     marginBottom: 15,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#7F8C8D',
-    marginBottom: 40,
-    textAlign: 'center',
-    paddingHorizontal: 40,
-  },
-  button: {
-    backgroundColor: '#3498db',
-    paddingVertical: 12,
-    paddingHorizontal: 50,
-    borderRadius: 30,
-    marginBottom: 20,
+    padding: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 6,
+    shadowRadius: 5,
+    elevation: 3,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
+  iconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
   },
-  secondaryButton: {
-    marginTop: 10,
+  textContainer: {
+    flex: 1,
   },
-  secondaryButtonText: {
-    color: '#3498db',
+  notificationTitle: {
     fontSize: 16,
-    textDecorationLine: 'underline',
+    fontWeight: 'bold',
+    color: '#2C3E50',
+  },
+  notificationMessage: {
+    fontSize: 14,
+    color: '#7F8C8D',
+    marginTop: 5,
+  },
+  notificationTime: {
+    fontSize: 12,
+    color: '#BDC3C7',
+    marginTop: 5,
+  },
+  emptyContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#7F8C8D',
     textAlign: 'center',
   },
 });
 
-export default WelcomeScreen;
+export default NotificationScreen;

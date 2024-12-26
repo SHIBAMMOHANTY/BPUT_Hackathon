@@ -1,17 +1,17 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import Signup from './Signup';
-import Login from './Login';
 
 const WelcomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Image 
-        source={{ uri: 'https://via.placeholder.com/150' }} 
+        source={require('../assets/ebiza.png')} // Correct way to load local image
         style={styles.logo}
       />
 
-      <Text style={styles.welcomeText}>Welcome to EbizA</Text>
+      {/* Removed Welcome Header Text */}
+      {/* <Text style={styles.welcomeText}>Welcome to EbizA</Text> */}
+
       <Text style={styles.subtitle}>Connecting investors, NGOs, and businesses for social impact</Text>
 
       {/* Get Started Button */}
@@ -47,13 +47,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     borderRadius: 15,
     backgroundColor: '#ddd',
-  },
-  welcomeText: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#2C3E50',
-    marginBottom: 15,
-    textAlign: 'center',
   },
   subtitle: {
     fontSize: 18,

@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { createStackNavigator } from '@react-navigation/stack';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-native';
 
 import Home from './pages/Home';
@@ -11,10 +12,14 @@ import Events from './pages/Events';
 import Project from './pages/Project';
 import Profile from './pages/Profile';
 import Notification from './pages/Notification';
+import WelcomeScreen from './pages/Welcome';
+import Signup from './pages/Signup';  // Ensure to import Signup
+import Login from './pages/Login';  // Ensure to import Login
 
 // Create Navigators
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 // Main Bottom Tab Navigator
 const MainTabNavigator = () => {
@@ -128,7 +133,22 @@ const DrawerNavigator = () => {
   );
 };
 
-// App Component - Entry Point
+// App Component - Entry Point Welcome Screen Entry Point
+// const App = () => {
+//   return (
+//     <NavigationContainer>
+//       <Stack.Navigator initialRouteName="Welcome">
+//         <Stack.Screen name="Welcome" component={WelcomeScreen} />
+//         <Stack.Screen name="Signup" component={Signup} />
+//         <Stack.Screen name="Login" component={Login} />
+//         <Stack.Screen name="Drawer" component={DrawerNavigator} />
+//       </Stack.Navigator>
+//     </NavigationContainer>
+//   );
+// };
+
+// App Component - Entry Point Dashboard Screen Entry Point
+
 const App = () => {
   return (
     <NavigationContainer>
