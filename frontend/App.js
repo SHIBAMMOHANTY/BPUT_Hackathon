@@ -134,28 +134,28 @@ const DrawerNavigator = () => {
 };
 
 // App Component - Entry Point Welcome Screen Entry Point
-// const App = () => {
-//   return (
-//     <NavigationContainer>
-//       <Stack.Navigator initialRouteName="Welcome">
-//         <Stack.Screen name="Welcome" component={WelcomeScreen} />
-//         <Stack.Screen name="Signup" component={Signup} />
-//         <Stack.Screen name="Login" component={Login} />
-//         <Stack.Screen name="Drawer" component={DrawerNavigator} />
-//       </Stack.Navigator>
-//     </NavigationContainer>
-//   );
-// };
-
-// App Component - Entry Point Dashboard Screen Entry Point
-
 const App = () => {
   return (
     <NavigationContainer>
-      <DrawerNavigator />
+      <Stack.Navigator initialRouteName="Welcome">
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
+        <Stack.Screen name="Signup" component={Signup} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Drawer" component={DrawerNavigator} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };
+
+// App Component - Entry Point Dashboard Screen Entry Point
+
+// const App = () => {
+//   return (
+//     <NavigationContainer>
+//       <DrawerNavigator />
+//     </NavigationContainer>
+//   );
+// };
 
 const styles = StyleSheet.create({
   screen: {
