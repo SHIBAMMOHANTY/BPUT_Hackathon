@@ -15,7 +15,7 @@ const Home = () => {
       {/* Hero Section */}
       <View style={styles.heroSection}>
         <Image
-          source={{ uri: 'https://example.com/hero-image.png' }} // Replace with your image URL
+          source={require('../assets/ebiza1.png')}
           style={styles.heroImage}
           resizeMode="contain"
         />
@@ -24,10 +24,10 @@ const Home = () => {
           Join hands to create opportunities for those who inspire us every day.
         </Text>
         <View style={styles.heroButtons}>
-          <TouchableOpacity style={styles.primaryButton} onPress={()=>navigate.navigate('Campigne')}>
+          <TouchableOpacity style={styles.primaryButton} onPress={()=>navigate.navigate('Campaign')}>
             <Text style={styles.buttonText} >Explore Campaigns</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.secondaryButton} onPress={()=>navigate.navigate('Project')}>
+          <TouchableOpacity style={styles.primaryButton} onPress={()=>navigate.navigate('Project')}>
             <Text style={styles.buttonText}>Start a Campaign</Text>
           </TouchableOpacity>
         </View>
