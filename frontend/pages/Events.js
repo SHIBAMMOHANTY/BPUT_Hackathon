@@ -1,233 +1,171 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  ScrollView,
-} from 'react-native';
+import React from "react";
+import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
 
-const Events = () => {
-  const [projects, setProjects] = useState([
-    {
-      title: 'Solar Energy Initiative',
-      description: 'A project to bring affordable solar energy to rural areas.',
-      fundingGoal: 100000,
-      location: 'California, USA',
-      category: 'Renewable Energy',
-      team: 'Team Solar',
-      contact: 'solarproject@example.com',
-      timeline: '12 months',
-      currentFunding: 45000,
-    },
-    {
-      title: 'Water Purification System',
-      description: 'Developing an efficient water purification system.',
-      fundingGoal: 50000,
-      location: 'Delhi, India',
-      category: 'Health & Environment',
-      team: 'Clean Water',
-      contact: 'cleanwater@example.com',
-      timeline: '8 months',
-      currentFunding: 20000,
-    },
-  ]);
-
-  const [investmentModalVisible, setInvestmentModalVisible] = useState(false);
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [investmentAmount, setInvestmentAmount] = useState('');
-
-  const openInvestmentModal = (project) => {
-    setSelectedProject(project);
-    setInvestmentModalVisible(true);
-  };
-
-  const handleInvestment = () => {
-    if (!selectedProject || !investmentAmount) return;
-
-    const updatedProjects = projects.map((project) => {
-      if (project.title === selectedProject.title) {
-        return {
-          ...project,
-          currentFunding: project.currentFunding + parseInt(investmentAmount),
-        };
-      }
-      return project;
-    });
-
-    setProjects(updatedProjects);
-    setInvestmentModalVisible(false);
-    setInvestmentAmount('');
-  };
-
+const EventPage = () => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Investment Opportunities</Text>
+    <ScrollView style={styles.container}>
+      
 
-      {/* Project List */}
-      <FlatList
-        data={projects}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.projectCard}>
-            <Text style={styles.projectTitle}>{item.title}</Text>
-            <Text style={styles.projectDetail}>Location: {item.location}</Text>
-            <Text style={styles.projectDetail}>
-              Funding Goal: ${item.fundingGoal.toLocaleString()}
-            </Text>
-            <Text style={styles.projectDetail}>
-              Current Funding: ${item.currentFunding.toLocaleString()}
-            </Text>
-            <Text style={styles.projectDetail}>Category: {item.category}</Text>
-            <Text style={styles.projectDescription}>{item.description}</Text>
-            <Text style={styles.projectDetail}>Team: {item.team}</Text>
-            <Text style={styles.projectDetail}>Contact: {item.contact}</Text>
-            <Text style={styles.projectDetail}>Timeline: {item.timeline}</Text>
-
-            <TouchableOpacity
-              style={styles.investButton}
-              onPress={() => openInvestmentModal(item)}
-            >
-              <Text style={styles.buttonText}>Invest</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+      {/* Event Banner */}
+      <Image
+        source={{ uri: "https://via.placeholder.com/400x200" }} // Replace with your image URL
+        style={styles.banner}
       />
 
-      {/* Investment Modal */}
-      <Modal
-        visible={investmentModalVisible}
-        animationType="slide"
-        onRequestClose={() => setInvestmentModalVisible(false)}
-      >
-        <ScrollView style={styles.modalContent}>
-          <Text style={styles.modalHeader}>Invest in Project</Text>
-          {selectedProject && (
-            <>
-              <Text style={styles.modalDetail}>
-                <Text style={styles.boldText}>Project: </Text>
-                {selectedProject.title}
-              </Text>
-              <Text style={styles.modalDetail}>
-                <Text style={styles.boldText}>Funding Goal: </Text>${selectedProject.fundingGoal.toLocaleString()}
-              </Text>
-              <Text style={styles.modalDetail}>
-                <Text style={styles.boldText}>Current Funding: </Text>${selectedProject.currentFunding.toLocaleString()}
-              </Text>
-            </>
-          )}
+      {/* Event Details */}
+      <View style={styles.detailsContainer}>
+        <Text style={styles.eventTitle}>Event Title</Text>
+        <Text style={styles.organizer}>Organized by: Organizer Name</Text>
+        <Text style={styles.dateTime}>Date: Jan 15, 2025 | Time: 10:00 AM</Text>
+        <Text style={styles.location}>Location: City Hall, Downtown</Text>
+        <Text style={styles.description}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel
+          odio elit. Ut at vehicula tortor. Mauris id fermentum purus.
+        </Text>
+      </View>
 
-          {/* Investment Input */}
-          <TextInput
-            style={styles.input}
-            placeholder="Enter investment amount"
-            value={investmentAmount}
-            onChangeText={(text) => setInvestmentAmount(text)}
-            keyboardType="numeric"
-          />
+      {/* Call-to-Action Buttons */}
+      <View style={styles.actionButtons}>
+        <TouchableOpacity style={styles.participateButton}>
+          <Text style={styles.buttonText}>Participate</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.donateButton}>
+          <Text style={styles.buttonText}>Donate</Text>
+        </TouchableOpacity>
+      </View>
 
-          {/* Modal Actions */}
-          <View style={styles.modalActions}>
-            <Button title="Confirm Investment" onPress={handleInvestment} />
-            <Button
-              title="Cancel"
-              color="red"
-              onPress={() => setInvestmentModalVisible(false)}
+      {/* Additional Information */}
+      <View style={styles.relatedEventsContainer}>
+        <Text style={styles.relatedEventsTitle}>Related Events</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View style={styles.relatedEvent}>
+            <Image
+              source={{ uri: "https://via.placeholder.com/150" }}
+              style={styles.relatedEventImage}
             />
+            <Text style={styles.relatedEventText}>Event 1</Text>
+          </View>
+          <View style={styles.relatedEvent}>
+            <Image
+              source={{ uri: "https://via.placeholder.com/150" }}
+              style={styles.relatedEventImage}
+            />
+            <Text style={styles.relatedEventText}>Event 2</Text>
           </View>
         </ScrollView>
-      </Modal>
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    textAlign: 'center',
-    color: '#333',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#007bff",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
   },
-  projectCard: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 15,
-    marginVertical: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 4,
+  backButton: {
+    color: "#fff",
+    fontSize: 16,
   },
-  projectTitle: {
+  headerTitle: {
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+  },
+  shareButton: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  banner: {
+    width: "100%",
+    height: 200,
+    resizeMode: "cover",
+  },
+  detailsContainer: {
+    padding: 15,
+    backgroundColor: "#fff",
+    marginBottom: 10,
+  },
+  eventTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 10,
+  },
+  organizer: {
+    fontSize: 14,
+    color: "#666",
     marginBottom: 5,
-    color: '#0056b3',
   },
-  projectDetail: {
+  dateTime: {
     fontSize: 14,
-    color: '#555',
-    marginVertical: 2,
+    color: "#666",
+    marginBottom: 5,
   },
-  projectDescription: {
+  location: {
     fontSize: 14,
-    color: '#333',
-    marginVertical: 10,
+    color: "#666",
+    marginBottom: 10,
   },
-  investButton: {
-    backgroundColor: '#28a745',
-    padding: 10,
-    borderRadius: 8,
-    marginTop: 10,
+  description: {
+    fontSize: 16,
+    color: "#444",
+    lineHeight: 22,
+  },
+  actionButtons: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginVertical: 20,
+  },
+  participateButton: {
+    backgroundColor: "#007bff",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+  },
+  donateButton: {
+    backgroundColor: "#28a745",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 25,
   },
   buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  modalContent: {
-    padding: 20,
-    backgroundColor: '#f9f9f9',
-    flex: 1,
-  },
-  modalHeader: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  modalDetail: {
+    color: "#fff",
     fontSize: 16,
-    color: '#555',
-    marginVertical: 5,
+    fontWeight: "bold",
   },
-  boldText: {
-    fontWeight: 'bold',
-    color: '#333',
+  relatedEventsContainer: {
+    padding: 15,
+    backgroundColor: "#fff",
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
-    marginVertical: 10,
-    backgroundColor: '#fff',
+  relatedEventsTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 10,
   },
-  modalActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
+  relatedEvent: {
+    marginRight: 15,
+    alignItems: "center",
+  },
+  relatedEventImage: {
+    width: 150,
+    height: 100,
+    borderRadius: 10,
+    marginBottom: 5,
+  },
+  relatedEventText: {
+    fontSize: 14,
+    color: "#333",
   },
 });
 
-export default Events;
+export default EventPage;
