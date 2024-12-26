@@ -27,7 +27,7 @@ const MainTabNavigator = () => {
             iconName = 'home';
           } else if (route.name === 'Dashboard') {
             iconName = 'analytics';
-          } else if (route.name === 'Events') {
+          } else if (route.name === 'Campigne') {
             iconName = 'calendar';
           } else if (route.name === 'Project') {
             iconName = 'briefcase';
@@ -43,7 +43,7 @@ const MainTabNavigator = () => {
     >
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Dashboard" component={Dashboard} />
-      <Tab.Screen name="Events" component={Events} />
+      <Tab.Screen name="Campigne" component={Events} />
       <Tab.Screen name="Project" component={Project} />
     </Tab.Navigator>
   );
