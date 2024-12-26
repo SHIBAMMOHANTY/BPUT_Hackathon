@@ -104,8 +104,9 @@ const DrawerNavigator = () => {
 const App = () => {
   return (
     <NavigationContainer>
-      <DrawerNavigator /> {/* Drawer Navigator wrapped around Main Tab */}
+      <DrawerNavigator /> 
     </NavigationContainer>
+ 
   );
 };
 
