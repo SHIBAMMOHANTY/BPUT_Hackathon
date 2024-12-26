@@ -1,27 +1,69 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
+import { useNavigation } from '@react-navigation/native';
 
 const EventPage = () => {
+  const navigation = useNavigation();
+
+  // Sample data for the campaign
+  const [campaignData] = useState({
+    title: "EbiZa Social Crowdfunding",
+    organizer: "Unicorn Team",
+    date: "Jan 15, 2025",
+    time: "10:00 AM",
+    location: "GIET, Bhubaneswar",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel odio elit. Ut at vehicula tortor. Mauris id fermentum purus.",
+    targetAmount: 10000,
+    raisedAmount: 4000,
+  });
+
+  const relatedCampaigns = [
+    { id: 1, title: "Campaign 1", image: require('../assets/ebiza1.png') },
+    { id: 2, title: "Campaign 2", image: require('../assets/ebiza.png') },
+    { id: 3, title: "Campaign 3", image: require('../assets/ebiza1.png') },
+  ];
+
+  const trendingCampaigns = [
+    { id: 1, title: "Trending Campaign 1", image: require('../assets/ebiza1.png') },
+    { id: 2, title: "Trending Campaign 2", image: require('../assets/ebiza.png') },
+    { id: 3, title: "Trending Campaign 3", image: require('../assets/ebiza1.png') },
+  ];
+
+  const liveCampaigns = [
+    { id: 1, title: "Live Campaign 1", image: require('../assets/ebiza1.png') },
+    { id: 2, title: "Live Campaign 2", image: require('../assets/ebiza.png') },
+    { id: 3, title: "Live Campaign 3", image: require('../assets/ebiza1.png') },
+  ];
+
+  const handleCampaignClick = (campaign) => {
+    // Navigate to the campaign details page
+    navigation.navigate('CampaignDetails', { campaign });
+  };
+
+  const progress = (campaignData.raisedAmount / campaignData.targetAmount) * 100;
+
   return (
     <ScrollView style={styles.container}>
-      
-
       {/* Event Banner */}
-      <Image
-        source={{ uri: "https://via.placeholder.com/400x200" }} // Replace with your image URL
-        style={styles.banner}
-      />
+      <Image source={require('../assets/ebiza1.png')} style={styles.banner} />
 
       {/* Event Details */}
       <View style={styles.detailsContainer}>
-        <Text style={styles.eventTitle}>Event Title</Text>
-        <Text style={styles.organizer}>Organized by: Organizer Name</Text>
-        <Text style={styles.dateTime}>Date: Jan 15, 2025 | Time: 10:00 AM</Text>
-        <Text style={styles.location}>Location: City Hall, Downtown</Text>
-        <Text style={styles.description}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel
-          odio elit. Ut at vehicula tortor. Mauris id fermentum purus.
-        </Text>
+        <Text style={styles.eventTitle}>{campaignData.title}</Text>
+        <Text style={styles.organizer}>{campaignData.organizer}</Text>
+        <Text style={styles.dateTime}>Date: {campaignData.date} | Time: {campaignData.time}</Text>
+        <Text style={styles.location}>Location: {campaignData.location}</Text>
+        <Text style={styles.description}>{campaignData.description}</Text>
+
+        {/* Progress Bar */}
+        <View style={styles.progressContainer}>
+          <Text style={styles.progressText}>
+            Raised: ${campaignData.raisedAmount} of ${campaignData.targetAmount}
+          </Text>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: `${progress}%` }]} />
+          </View>
+        </View>
       </View>
 
       {/* Call-to-Action Buttons */}
@@ -34,24 +76,42 @@ const EventPage = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Additional Information */}
+      {/* Related Campaigns */}
       <View style={styles.relatedEventsContainer}>
-        <Text style={styles.relatedEventsTitle}>Related Events</Text>
+        <Text style={styles.relatedEventsTitle}>Related Campaigns</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.relatedEvent}>
-            <Image
-              source={{ uri: "https://via.placeholder.com/150" }}
-              style={styles.relatedEventImage}
-            />
-            <Text style={styles.relatedEventText}>Event 1</Text>
-          </View>
-          <View style={styles.relatedEvent}>
-            <Image
-              source={{ uri: "https://via.placeholder.com/150" }}
-              style={styles.relatedEventImage}
-            />
-            <Text style={styles.relatedEventText}>Event 2</Text>
-          </View>
+          {relatedCampaigns.map((campaign) => (
+            <TouchableOpacity key={campaign.id} onPress={() => handleCampaignClick(campaign)} style={styles.relatedEvent}>
+              <Image source={campaign.image} style={styles.relatedEventImage} />
+              <Text style={styles.relatedEventText}>{campaign.title}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* Trending Campaigns */}
+      <View style={styles.trendingEventsContainer}>
+        <Text style={styles.trendingEventsTitle}>Trending Campaigns</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {trendingCampaigns.map((campaign) => (
+            <TouchableOpacity key={campaign.id} onPress={() => handleCampaignClick(campaign)} style={styles.trendingEvent}>
+              <Image source={campaign.image} style={styles.trendingEventImage} />
+              <Text style={styles.trendingEventText}>{campaign.title}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* Live Campaigns */}
+      <View style={styles.liveEventsContainer}>
+        <Text style={styles.liveEventsTitle}>Live Campaigns</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {liveCampaigns.map((campaign) => (
+            <TouchableOpacity key={campaign.id} onPress={() => handleCampaignClick(campaign)} style={styles.liveEvent}>
+              <Image source={campaign.image} style={styles.liveEventImage} />
+              <Text style={styles.liveEventText}>{campaign.title}</Text>
+            </TouchableOpacity>
+          ))}
         </ScrollView>
       </View>
     </ScrollView>
@@ -62,27 +122,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#007bff",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-  },
-  backButton: {
-    color: "#fff",
-    fontSize: 16,
-  },
-  headerTitle: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  shareButton: {
-    color: "#fff",
-    fontSize: 16,
   },
   banner: {
     width: "100%",
@@ -119,6 +158,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#444",
     lineHeight: 22,
+  },
+  progressContainer: {
+    marginTop: 15,
+  },
+  progressText: {
+    fontSize: 14,
+    color: "#333",
+    marginBottom: 5,
+  },
+  progressBar: {
+    height: 10,
+    backgroundColor: "#e0e0e0",
+    borderRadius: 5,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: "#007bff",
   },
   actionButtons: {
     flexDirection: "row",
@@ -163,6 +220,60 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   relatedEventText: {
+    fontSize: 14,
+    color: "#333",
+  },
+  trendingEventsContainer: {
+    padding: 15,
+    backgroundColor: "#fff",
+  },
+  trendingEventsTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 10,
+  },
+  trendingEvent: {
+    marginRight: 15,
+    alignItems: "center",
+    backgroundColor: "#f0f8ff", // Light blue background for trending campaigns
+    borderRadius: 10,
+    padding: 10,
+  },
+  trendingEventImage: {
+    width: 150,
+    height: 100,
+    borderRadius: 10,
+    marginBottom: 5,
+  },
+  trendingEventText: {
+    fontSize: 14,
+    color: "#333",
+  },
+  liveEventsContainer: {
+    padding: 15,
+    backgroundColor: "#fff",
+  },
+  liveEventsTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 10,
+  },
+  liveEvent: {
+    marginRight: 15,
+    alignItems: "center",
+    backgroundColor: "#ffe4e1", // Light coral background for live campaigns
+    borderRadius: 10,
+    padding: 10,
+  },
+  liveEventImage: {
+    width: 150,
+    height: 100,
+    borderRadius: 10,
+    marginBottom: 5,
+  },
+  liveEventText: {
     fontSize: 14,
     color: "#333",
   },

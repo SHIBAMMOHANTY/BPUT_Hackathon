@@ -6,7 +6,7 @@ const WelcomeScreen = ({ navigation }) => {
     // Redirect to Home route after 1 second
     const timer = setTimeout(() => {
       navigation.replace('Drawer'); // Navigate to Home (Drawer)
-    }, 1000);
+    }, 2000);
 
     // Cleanup timer to avoid memory leaks
     return () => clearTimeout(timer);

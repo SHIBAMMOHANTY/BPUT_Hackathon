@@ -238,3 +238,225 @@ const styles = StyleSheet.create({
 });
 
 export default Dashboard;
+
+
+// import React, { useState, useEffect } from 'react';
+// import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
+// import { Card } from 'react-native-paper';
+// import { MaterialIcons } from '@expo/vector-icons';
+// import { LineChart } from 'react-native-chart-kit';
+// import axios from 'axios';
+
+// const Dashboard = () => {
+//   const [expandedCard, setExpandedCard] = useState(null);
+//   const [data, setData] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const response = await axios.get('YOUR_BACKEND_API_URL');
+//         setData(response.data);
+//       } catch (err) {
+//         setError('Failed to fetch data');
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchData();
+//   }, []);
+
+//   const toggleCard = (cardName) => {
+//     setExpandedCard(expandedCard === cardName ? null : cardName);
+//   };
+
+//   if (loading) {
+//     return <ActivityIndicator size="large" color="#0000ff" />;
+//   }
+
+//   if (error) {
+//     return <Text style={styles.errorText}>{error}</Text>;
+//   }
+
+//   return (
+//     <ScrollView style={styles.container}>
+//       <View style={styles.cardContainer}>
+//         {/* Total Funds Raised */}
+//         <Card style={styles.card}>
+//           <TouchableOpacity onPress={() => toggleCard('fundsRaised')}>
+//             <View style={styles.cardContent}>
+//               <MaterialIcons name="attach-money" size={40} color="#4CAF50" />
+//               <Text style={styles.cardTitle}>Total Funds Raised</Text>
+//               <Text style={styles.cardValue}>${data.totalFundsRaised}</Text>
+//             </View>
+//           </TouchableOpacity>
+//           {expandedCard === 'fundsRaised' && (
+//             <View style={styles.expandedContentcharts}>
+//               <LineChart
+//                 data={{
+//                   labels: data.fundsRaised.map(item => item.month),
+//                   datasets: [{ data: data.fundsRaised.map(item => item.amount) }],
+//                 }}
+//                 width={Dimensions.get('window').width - 40}
+//                 height={220}
+//                 chartConfig={{
+//                   backgroundColor: '#4CAF50',
+//                   backgroundGradientFrom: '#4CAF50',
+//                   backgroundGradientTo: '#80E27E',
+//                   decimalPlaces: 2,
+//                   color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+//                   labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+//                   style: { borderRadius: 10 },
+//                   propsForDots: { r: '6', strokeWidth: '2', stroke: '#4CAF50' },
+//                 }}
+//                 style={{ marginVertical: 8, borderRadius: 10 }}
+//               />
+//             </View>
+//           )}
+//         </Card>
+
+//         {/* Total Projects */}
+//         <Card style={styles.card}>
+//           <TouchableOpacity onPress={() => toggleCard('projects')}>
+//             <View style={styles.cardContent}>
+//               <MaterialIcons name="business" size={40} color="#2196F3" />
+//               <Text style={styles.cardTitle}>Total Projects</Text>
+//               <Text style={styles.cardValue}>{data.totalProjects}</Text>
+//             </View>
+//           </TouchableOpacity>
+//           {expandedCard === 'projects' && (
+//             <View style={styles.expandedContent}>
+//               {data.projects.map((project, index) => (
+//                 <View key={index} style={styles.projectRow}>
+//                   <Text style={styles.projectText}>{project.name}: {project.amount} of $25,000</Text>
+//                   <View style={styles.progressBarContainer}>
+//                     <View style={[styles.progressBar, { width: `${(parseInt(project.amount.replace('$', '').replace(',', '')) / 25000) * 100}%` }]} />
+//                   </View>
+//                 </View>
+//               ))}
+//             </View>
+//           )}
+//         </Card>
+
+//         {/* Total Investors */}
+//         <Card style={styles.card}>
+//           <TouchableOpacity onPress={() => toggleCard('investors')}>
+//             <View style={styles.cardContent}>
+//               <MaterialIcons name="people" size={40} color="#FF9800" />
+//               <Text style={styles.cardTitle}>Total Investors</Text>
+//               <Text style={styles.cardValue}>{data.investors.length}</Text>
+//             </View>
+//           </TouchableOpacity>
+//           {expandedCard === 'investors' && (
+//             <View style={styles.expandedContent}>
+//               {data.investors.map((investor, index) => (
+//                 <View key={index} style={styles.investorCard}>
+//                   <View style={styles.investorContent}>
+//                     <MaterialIcons name="person" size={24} color="#FF9800" />
+//                     <Text style={styles.investorName}>{investor.name}</Text>
+//                   </View>
+//                   <Text style={styles.investorDetails}>
+//                     Invested {investor.amount} in {investor.project}
+//                   </Text>
+//                 </View>
+//               ))}
+//             </View>
+//           )}
+//         </Card>
+//       </View>
+//     </ScrollView>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     padding: 20,
+//     backgroundColor: '#f3f4f6',
+//   },
+//   errorText: {
+//     color: 'red',
+//     textAlign: 'center',
+//     marginTop: 20,
+//   },
+//   investorContent: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     marginBottom: 10,
+//   },
+//   investorName: {
+//     fontSize: 20,
+//     fontWeight: 'bold',
+//     marginLeft: 10,
+//     color: '#333',
+//   },
+//   investorDetails: {
+//     fontSize: 16,
+//     color: '#333',
+//     marginLeft: 30,
+//   },
+//   investorCard: {
+//     borderRadius: 10,
+//     marginBottom: 10,
+//     padding: 15,
+//     borderBottomWidth: 1,
+//     borderBottomColor: '#ddd',
+//   },
+//   cardContainer: {
+//     flexDirection: 'column',
+//     alignItems: 'center',
+//   },
+//   card: {
+//     width: '100%',
+//     marginBottom: 20,
+//     borderRadius: 10,
+//     elevation: 3,
+//     backgroundColor: '#fff',
+//   },
+//   cardContent: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     padding: 20,
+//   },
+//   cardTitle: {
+//     fontSize: 18,
+//     fontWeight: '600',
+//     marginLeft: 10,
+//     flex: 1,
+//   },
+//   cardValue: {
+//     fontSize: 24,
+//     fontWeight: 'bold',
+//     color: '#333',
+//   },
+//   expandedContent: {
+//     padding: 15,
+//   },
+//   expandedContentcharts: {
+//     padding: 0,
+//     backgroundColor: '#e0f7fa',
+//   },
+//   projectRow: {
+//     marginBottom: 15,
+//   },
+//   projectText: {
+//     fontSize: 16,
+//     marginBottom: 5,
+//     color: '#333',
+//   },
+//   progressBarContainer: {
+//     width: '100%',
+//     height: 10,
+//     backgroundColor: '#e0e0e0',
+//     borderRadius: 5,
+//     overflow: 'hidden',
+//   },
+//   progressBar: {
+//     height: '100%',
+//     backgroundColor: '#2196F3',
+//   },
+// });
+
+// export default Dashboard;
