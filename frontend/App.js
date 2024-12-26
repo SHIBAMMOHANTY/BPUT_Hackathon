@@ -10,6 +10,9 @@ import Dashboard from './pages/Dashboard';
 import Events from './pages/Events';
 import Project from './pages/Project';
 import Profile from './pages/Profile';
+import SignUp from './pages/Signup';
+import Login from './pages/Login';
+
 
 // Create Navigators
 const Drawer = createDrawerNavigator();
@@ -85,8 +88,9 @@ const DrawerNavigator = () => {
 const App = () => {
   return (
     <NavigationContainer>
-      <DrawerNavigator /> {/* Drawer Navigator wrapped around Main Tab */}
+      <DrawerNavigator /> 
     </NavigationContainer>
+ 
   );
 };
 
