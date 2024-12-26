@@ -84,7 +84,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f7f9fc',
     paddingTop: 20,
-    paddingHorizontal: 15,
+    paddingHorizontal: 0, // Full width
+    width: '100%', // Ensure full width
   },
   list: {
     paddingBottom: 20,
@@ -100,6 +101,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
+    width: '100%', // Full width
   },
   iconContainer: {
     justifyContent: 'center',

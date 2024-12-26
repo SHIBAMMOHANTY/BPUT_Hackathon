@@ -92,6 +92,7 @@ const DrawerNavigator = () => {
             <Ionicons name="notifications-outline" size={24} color="white" />
           </TouchableOpacity>
         ),
+        // headerShown: false,
       })}
     >
       {/* Drawer Screen for MainTabNavigator */}
@@ -138,10 +139,18 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Welcome">
-        <Stack.Screen name="Welcome" component={WelcomeScreen} />
-        <Stack.Screen name="Signup" component={Signup} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Drawer" component={DrawerNavigator} />
+        <Stack.Screen name="Welcome" component={WelcomeScreen}   options={{
+        headerShown: false, 
+      }}/>
+        {/* <Stack.Screen name="Signup" component={Signup}   options={{
+        headerShown: false, 
+      }}/>
+        <Stack.Screen name="Login" component={Login}   options={{
+        headerShown: false, 
+      }}/> */}
+        <Stack.Screen name="Drawer" component={DrawerNavigator}  options={{
+        headerShown: false, 
+      }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
