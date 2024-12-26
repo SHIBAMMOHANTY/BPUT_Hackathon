@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-native';
 
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
@@ -49,6 +49,23 @@ const MainTabNavigator = () => {
   );
 };
 
+// Function to redirect to WhatsApp
+const openWhatsApp = () => {
+  const phoneNumber = '8458024651';
+  const message = 'Hello, I need help and support.';
+  const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+
+  Linking.canOpenURL(url)
+    .then((supported) => {
+      if (!supported) {
+        Alert.alert('Error', 'WhatsApp is not installed on your device');
+      } else {
+        return Linking.openURL(url);
+      }
+    })
+    .catch((err) => console.error('An error occurred', err));
+};
+
 // Drawer Navigator (Hamburger Menu)
 const DrawerNavigator = () => {
   return (
@@ -75,13 +92,17 @@ const DrawerNavigator = () => {
           </View>
         )}
       </Drawer.Screen>
-      <Drawer.Screen name="Help & Support">
-        {() => (
-          <View style={styles.screen}>
-            <Text style={styles.routeName}>Help & Support</Text>
-          </View>
-        )}
-      </Drawer.Screen>
+      <Drawer.Screen
+        name="Help & Support"
+        component={() => {
+          openWhatsApp(); // Call WhatsApp redirect function
+          return (
+            <View style={styles.screen}>
+              <Text style={styles.routeName}>Redirecting to WhatsApp...</Text>
+            </View>
+          );
+        }}
+      />
       <Drawer.Screen name="My Profile">
         {() => (
           <View style={styles.screen}>
@@ -104,9 +125,8 @@ const DrawerNavigator = () => {
 const App = () => {
   return (
     <NavigationContainer>
-      <DrawerNavigator /> 
+      <DrawerNavigator />
     </NavigationContainer>
- 
   );
 };
 
