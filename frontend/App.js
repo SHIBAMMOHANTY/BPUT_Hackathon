@@ -71,13 +71,20 @@ const DrawerNavigator = () => {
   return (
     <Drawer.Navigator
       screenOptions={({ navigation }) => ({
+        headerStyle: {
+          backgroundColor: '#4e73df',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
         // Add notification icon to the header
         headerRight: () => (
           <TouchableOpacity
             onPress={() => navigation.navigate('Notifications')}
             style={{ marginRight: 15 }}
           >
-            <Ionicons name="notifications-outline" size={24} color="black" />
+            <Ionicons name="notifications-outline" size={24} color="white" />
           </TouchableOpacity>
         ),
       })}

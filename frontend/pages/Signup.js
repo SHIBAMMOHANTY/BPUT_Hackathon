@@ -1,228 +1,126 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
-  Platform,
-} from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import React, { useState } from 'react';
+import { View, TextInput, Text, Button, TouchableOpacity, StyleSheet } from 'react-native';
 
-const SignUp = ({ navigation }) => {
-  const [userType, setUserType] = useState("business");
-  const [disabilityType, setDisabilityType] = useState("");
-  const [comment, setComment] = useState("");
-  const disabilityTypes = [
-    "Visual Impairment",
-    "Hearing Impairment",
-    "Mobility Issues",
-    "Cognitive Disabilities",
-    "Speech Impairments",
-    "Other",
-  ];
+const SignupScreen = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [role, setRole] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [disabilityCategory, setDisabilityCategory] = useState('');
+
+  const handleSignup = () => {
+    const userData = { name, email, role, password, disabilityCategory };
+    console.log(userData);  // Replace with actual signup logic
+  };
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.card}>
-        <Text style={styles.heading}>Sign Up for EbizA</Text>
-        {/* User Type Selector */}
-        <Text style={styles.label}>User Type</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={userType}
-            onValueChange={(value) => setUserType(value)}
-            style={styles.picker}
-            itemStyle={styles.pickerItem}
-          >
-            <Picker.Item label="Business User" value="business" />
-            <Picker.Item label="Investor" value="investor" />
-            <Picker.Item label="NGO" value="ngo" />
-          </Picker>
-        </View>
+    <View style={styles.container}>
+      <Text style={styles.header}>Create an Account</Text>
 
-        {/* Full Name Field */}
-        <Text style={styles.label}>Full Name</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Full Name"
+        value={name}
+        onChangeText={setName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Confirm Password"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Role (Investor / NGO / Business Owner)"
+        value={role}
+        onChangeText={setRole}
+      />
+
+      {role === 'Business Owner' && (
         <TextInput
           style={styles.input}
-          placeholder="Enter your full name"
-          placeholderTextColor="#888"
+          placeholder="Disability Category"
+          value={disabilityCategory}
+          onChangeText={setDisabilityCategory}
         />
+      )}
 
-        {/* Email Address Field */}
-        <Text style={styles.label}>Email Address</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your email"
-          placeholderTextColor="#888"
-          keyboardType="email-address"
-        />
+      <TouchableOpacity style={styles.button} onPress={handleSignup}>
+        <Text style={styles.buttonText}>Sign Up</Text>
+      </TouchableOpacity>
 
-        {/* Password Field */}
-        <Text style={styles.label}>Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Create a password"
-          placeholderTextColor="#888"
-          secureTextEntry
-        />
-
-        {/* Display Disability Options only for Business User */}
-        {userType === "business" && (
-          <>
-            <Text style={styles.label}>Types of Disabilities</Text>
-            {disabilityTypes.map((type) => (
-              <View key={type} style={styles.radioContainer}>
-                <TouchableOpacity
-                  onPress={() => setDisabilityType(type)}
-                  style={[
-                    styles.radioButton,
-                    disabilityType === type && styles.radioButtonSelected,
-                  ]}
-                />
-                <Text style={styles.radioLabel}>{type}</Text>
-              </View>
-            ))}
-
-            {/* Comment Box for 'Other' Disability Type */}
-            {disabilityType === "Other" && (
-              <View>
-                <Text style={styles.label}>Please describe the disability</Text>
-                <TextInput
-                  style={[styles.input, styles.textArea]}
-                  placeholder="Enter additional details"
-                  placeholderTextColor="#888"
-                  value={comment}
-                  onChangeText={setComment}
-                  multiline
-                  numberOfLines={4}
-                />
-              </View>
-            )}
-          </>
-        )}
-
-        {/* Submit Button */}
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Sign Up</Text>
-        </TouchableOpacity>
-
-        {/* Login Redirect */}
-        <Text style={styles.footerText}>
-          Already have an account?{" "}
-          <Text style={styles.link} onPress={() =>navigation.navigate("Login")}>
-            Login
-          </Text>
-        </Text>
-      </View>
-    </ScrollView>
+      <TouchableOpacity style={styles.loginLink} onPress={() => {/* Navigate to Login */}}>
+        <Text style={styles.linkText}>Already have an account? Login</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "linear-gradient(to right, #cce7ff, #ffb3ff)",
-    paddingHorizontal: 16,
-  },
-  card: {
-    width: "100%",
-    backgroundColor: "white",
-    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f7f9fc',
     padding: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 5,
   },
-  heading: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
-    color: "#333",
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#555",
-    marginTop: 12,
+  header: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#2C3E50',
+    marginBottom: 30,
   },
   input: {
-    width: "100%",
-    padding: 10,
+    width: '100%',
+    height: 45,
+    borderColor: '#ccc',
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    marginTop: 8,
-    color: "#333",
-  },
-  pickerContainer: {
-    marginTop: 8,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    overflow: "hidden",
-    backgroundColor: "#fff",
-  },
-  picker: {
-    width: "100%",
-    height: Platform.OS === "ios" ? 150 : 40,
-    color: "#333",
-  },
-  pickerItem: {
-    color: "#333",
-  },
-  radioContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 8,
-  },
-  radioButton: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    borderWidth: 2,
-    borderColor: "#888",
-    marginRight: 8,
-  },
-  radioButtonSelected: {
-    backgroundColor: "#4f46e5",
-  },
-  radioLabel: {
-    fontSize: 14,
-    color: "#333",
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: "top",
+    marginBottom: 15,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    backgroundColor: '#fff',
   },
   button: {
-    marginTop: 20,
-    backgroundColor: "#4f46e5",
+    backgroundColor: '#3498db',
     paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
+    paddingHorizontal: 50,
+    borderRadius: 30,
+    marginTop: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
   },
   buttonText: {
-    color: "white",
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  loginLink: {
+    marginTop: 15,
+  },
+  linkText: {
+    color: '#3498db',
     fontSize: 16,
-    fontWeight: "bold",
-  },
-  footerText: {
-    marginTop: 20,
-    fontSize: 14,
-    textAlign: "center",
-    color: "#555",
-  },
-  link: {
-    color: "#4f46e5",
-    fontWeight: "bold",
+    textDecorationLine: 'underline',
   },
 });
 
-export default SignUp;
+export default SignupScreen;
