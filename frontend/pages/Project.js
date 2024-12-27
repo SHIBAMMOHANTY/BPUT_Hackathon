@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   View,
   Text,
@@ -10,6 +11,7 @@ import {
   Modal,
   ScrollView,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const ProjectPage = () => {
   const [projects, setProjects] = useState([]);
@@ -78,6 +80,23 @@ const ProjectPage = () => {
   const toggleProjectDetails = (index) => {
     setExpandedProjectIndex(expandedProjectIndex === index ? null : index);
   };
+  
+  const buttonClick = async () => {
+    const navigation = useNavigation();
+  
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (token) {
+        setModalVisible(true);
+      } else {
+        Alert.alert("Unauthorized", "You need to log in to access this feature.");
+        navigation.navigate("Login");
+      }
+    } catch (error) {
+      console.error("Error checking authentication:", error);
+    }
+
+  };
 
   return (
     <View style={styles.container}>
@@ -92,7 +111,7 @@ const ProjectPage = () => {
       />
 
       {/* Add Project Button */}
-      <Button title="Add Project" onPress={() => setModalVisible(true)} />
+      <Button title="Add Project" onPress={() =>buttonClick()} />
 
       {/* Project List */}
       <FlatList
