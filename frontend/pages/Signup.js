@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { Picker } from '@react-native-picker/picker'; // Import Picker from the new package
+import axios from 'axios';
+
 
 const SignupScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -7,15 +10,72 @@ const SignupScreen = ({ navigation }) => {
   const [role, setRole] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [disabilityCategory, setDisabilityCategory] = useState('');
+  const [disabilityType, setDisabilityType] = useState(''); // Only the disability type state
+  const [loading, setLoading] = useState(false); // State to manage the loader
 
-  const handleSignup = () => {
-    const userData = { name, email, role, password, disabilityCategory };
-    console.log(userData);  // Replace with actual signup logic
+  // List of disability types
+  const disabilityTypes = [
+    'Visual Impairment',
+    'Hearing Impairment',
+    'Cognitive Impairment',
+    'Physical Impairment',
+    'Speech Impairment',
+    'Multiple Disabilities',
+    'Other'
+  ];
+
+  const handleSignup = async () => {
+    // Check if passwords match before submitting
+    if (password !== confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
+    // Prepare the data to send in the POST request
+    const userData = JSON.stringify({
+      fullname: name,
+      email: email,
+      password: password,
+      role: role,
+      disabilityType: disabilityType
+    });
+
+    // Axios request configuration
+    const config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'http://192.168.29.193:5000/api/users/create',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: userData,
+    };
+
+    setLoading(true); // Start loader
+
+    try {
+      const response = await axios.request(config);
+      console.log('Signup successful:', response.data);
+
+      // Reset form fields after successful signup
+      setName('');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+      setRole('');
+      setDisabilityType('');
+
+      // Redirect to the login page
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Error during signup:', error.response || error.message);
+    } finally {
+      setLoading(false); // Stop loader
+    }
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Create an Account</Text>
 
       <TextInput
@@ -23,6 +83,7 @@ const SignupScreen = ({ navigation }) => {
         placeholder="Full Name"
         value={name}
         onChangeText={setName}
+        autoCapitalize="words"
       />
       <TextInput
         style={styles.input}
@@ -46,36 +107,55 @@ const SignupScreen = ({ navigation }) => {
         secureTextEntry
       />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Role (Investor / NGO / Business Owner)"
-        value={role}
-        onChangeText={setRole}
-      />
+      {/* Role Select Input */}
+      <View style={styles.input}>
+        <Picker
+          selectedValue={role}
+          onValueChange={(itemValue) => setRole(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Role" value="" />
+          <Picker.Item label="INVESTER" value="INVESTER" />
+          <Picker.Item label="NGO" value="NGO" />
+          <Picker.Item label="BUSINESS OWNER" value="BUSINESS OWNER" />
+        </Picker>
+      </View>
 
-      {role === 'Business Owner' && (
-        <TextInput
-          style={styles.input}
-          placeholder="Disability Category"
-          value={disabilityCategory}
-          onChangeText={setDisabilityCategory}
-        />
+      {/* Disability Type Dropdown for Business Owners */}
+      {role === 'BUSINESS OWNER' && (
+        <View style={styles.input}>
+          <Picker
+            selectedValue={disabilityType}
+            onValueChange={(itemValue) => setDisabilityType(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Select Disability Type" value="" />
+            {disabilityTypes.map((type, index) => (
+              <Picker.Item key={index} label={type} value={type} />
+            ))}
+          </Picker>
+        </View>
       )}
 
-      <TouchableOpacity style={styles.button} onPress={handleSignup}>
-        <Text style={styles.buttonText}>Sign Up</Text>
-      </TouchableOpacity>
+      {/* Show the loader if the signup is in progress */}
+      {loading ? (
+        <ActivityIndicator size="large" color="#3498db" />
+      ) : (
+        <TouchableOpacity style={styles.button} onPress={handleSignup}>
+          <Text style={styles.buttonText}>Sign Up</Text>
+        </TouchableOpacity>
+      )}
 
       <TouchableOpacity style={styles.loginLink} onPress={() => navigation.navigate('Login')}>
         <Text style={styles.linkText}>Already have an account? Login</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f7f9fc',
@@ -86,16 +166,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#2C3E50',
     marginBottom: 30,
+    textAlign: 'center',
   },
   input: {
     width: '100%',
-    height: 45,
+    height: 50,
     borderColor: '#ccc',
     borderWidth: 1,
+    borderRadius: 8,
     marginBottom: 15,
-    paddingHorizontal: 10,
-    borderRadius: 5,
+    paddingHorizontal: 12,
     backgroundColor: '#fff',
+  },
+  picker: {
+    height: 50,
+    width: '100%',
+    borderRadius: 8,
   },
   button: {
     backgroundColor: '#3498db',

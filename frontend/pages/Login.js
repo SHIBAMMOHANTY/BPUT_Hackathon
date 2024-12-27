@@ -1,28 +1,77 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = ({ navigation }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleLogin = async () => {
+    setLoading(true);
+    setError('');
+
+    const data = {
+      email: email,
+      password: password,
+    };
+
+    try {
+      const response = await axios.post('http://192.168.29.193:5000/api/users/login', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const token = response.data.token; // assuming token is returned in response.data.token
+      await AsyncStorage.setItem('authToken', token); // Save token in AsyncStorage
+
+      setLoading(false);
+      // Redirect to home page
+      navigation.navigate('Home');
+    } catch (error) {
+      setLoading(false);
+      setError('Login failed. Please check your credentials.');
+      console.error('Login error:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
-      <TextInput 
-        style={styles.input} 
-        placeholder="Email" 
-        keyboardType="email-address" 
-      />
-      <TextInput 
-        style={styles.input} 
-        placeholder="Password" 
-        secureTextEntry 
+
+      {/* Email Input */}
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        keyboardType="email-address"
+        value={email}
+        onChangeText={setEmail}
       />
 
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Login</Text>
+      {/* Password Input */}
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
+
+      {/* Error message */}
+      {error ? <Text style={styles.error}>{error}</Text> : null}
+
+      {/* Login Button */}
+      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+        <Text style={styles.buttonText}>{loading ? 'Logging in...' : 'Login'}</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity 
-        style={styles.secondaryButton} 
-        onPress={() => navigation.navigate('Signup')} // Navigate to Signup if user doesn't have an account
+      {/* Navigate to Signup */}
+      <TouchableOpacity
+        style={styles.secondaryButton}
+        onPress={() => navigation.navigate('Signup')}
       >
         <Text style={styles.secondaryButtonText}>Don't have an account? Sign up</Text>
       </TouchableOpacity>
@@ -71,6 +120,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textDecorationLine: 'underline',
     textAlign: 'center',
+  },
+  error: {
+    color: 'red',
+    marginTop: 10,
   },
 });
 
