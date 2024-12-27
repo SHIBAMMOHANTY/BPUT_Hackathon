@@ -13,8 +13,8 @@ import Project from './pages/Project';
 import Profile from './pages/Profile';
 import Notification from './pages/Notification';
 import WelcomeScreen from './pages/Welcome';
-import Signup from './pages/Signup';  // Ensure to import Signup
-import Login from './pages/Login';  // Ensure to import Login
+import Signup from './pages/Signup';
+import Login from './pages/Login';
 
 // Create Navigators
 const Drawer = createDrawerNavigator();
@@ -39,7 +39,7 @@ const MainTabNavigator = () => {
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        headerShown: false, // Hide header for bottom tab screens
+        headerShown: false,
       })}
       tabBarOptions={{
         activeTintColor: '#6366f1',
@@ -83,7 +83,6 @@ const DrawerNavigator = () => {
         headerTitleStyle: {
           fontWeight: 'bold',
         },
-        // Add notification icon to the header
         headerRight: () => (
           <TouchableOpacity
             onPress={() => navigation.navigate('Notifications')}
@@ -92,12 +91,9 @@ const DrawerNavigator = () => {
             <Ionicons name="notifications-outline" size={24} color="white" />
           </TouchableOpacity>
         ),
-        // headerShown: false,
       })}
     >
-      {/* Drawer Screen for MainTabNavigator */}
       <Drawer.Screen name="Home" component={MainTabNavigator} />
-      {/* Additional Drawer Screens */}
       <Drawer.Screen name="Language Support">
         {() => (
           <View style={styles.screen}>
@@ -108,7 +104,7 @@ const DrawerNavigator = () => {
       <Drawer.Screen
         name="Help & Support"
         component={() => {
-          openWhatsApp(); // Call WhatsApp redirect function
+          openWhatsApp();
           return (
             <View style={styles.screen}>
               <Text style={styles.routeName}>Redirecting to WhatsApp...</Text>
@@ -118,9 +114,9 @@ const DrawerNavigator = () => {
       />
       <Drawer.Screen name="My Profile">
         {() => (
-          <View style={styles.screen}>
-            <Profile />
-          </View>
+          <Stack.Navigator>
+            <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
+          </Stack.Navigator>
         )}
       </Drawer.Screen>
       <Drawer.Screen name="Notifications">
@@ -134,37 +130,19 @@ const DrawerNavigator = () => {
   );
 };
 
-// App Component - Entry Point Welcome Screen Entry Point
+// App Component - Entry Point
 const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Welcome">
-        <Stack.Screen name="Welcome" component={WelcomeScreen}   options={{
-        headerShown: false, 
-      }}/>
-        {/* <Stack.Screen name="Signup" component={Signup}   options={{
-        headerShown: false, 
-      }}/>
-        <Stack.Screen name="Login" component={Login}   options={{
-        headerShown: false, 
-      }}/> */}
-        <Stack.Screen name="Drawer" component={DrawerNavigator}  options={{
-        headerShown: false, 
-      }}/>
+        <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="Drawer" component={DrawerNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
-
-// App Component - Entry Point Dashboard Screen Entry Point
-
-// const App = () => {
-//   return (
-//     <NavigationContainer>
-//       <DrawerNavigator />
-//     </NavigationContainer>
-//   );
-// };
 
 const styles = StyleSheet.create({
   screen: {
