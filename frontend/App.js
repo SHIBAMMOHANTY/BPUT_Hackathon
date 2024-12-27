@@ -46,10 +46,34 @@ const MainTabNavigator = () => {
         inactiveTintColor: 'gray',
       }}
     >
-      <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Dashboard" component={Dashboard} />
-      <Tab.Screen name="Campaign" component={Events} />
-      <Tab.Screen name="Project" component={Project} />
+      <Tab.Screen
+        name="Home"
+        component={Home}
+        options={{
+          tabBarAccessibilityLabel: 'Navigate to Home screen',
+        }}
+      />
+      <Tab.Screen
+        name="Dashboard"
+        component={Dashboard}
+        options={{
+          tabBarAccessibilityLabel: 'Navigate to Dashboard screen',
+        }}
+      />
+      <Tab.Screen
+        name="Campaign"
+        component={Events}
+        options={{
+          tabBarAccessibilityLabel: 'Navigate to Campaigns screen',
+        }}
+      />
+      <Tab.Screen
+        name="Project"
+        component={Project}
+        options={{
+          tabBarAccessibilityLabel: 'Navigate to Project screen',
+        }}
+      />
     </Tab.Navigator>
   );
 };
@@ -93,14 +117,24 @@ const DrawerNavigator = () => {
         ),
       })}
     >
-      <Drawer.Screen name="Home" component={MainTabNavigator} />
-      <Drawer.Screen name="Language Support">
-        {() => (
+      <Drawer.Screen
+        name="Home"
+        component={MainTabNavigator}
+        options={{
+          drawerAccessibilityLabel: 'Navigate to Home screen',
+        }}
+      />
+      <Drawer.Screen
+        name="Language Support"
+        component={() => (
           <View style={styles.screen}>
             <Text style={styles.routeName}>Language Support</Text>
           </View>
         )}
-      </Drawer.Screen>
+        options={{
+          drawerAccessibilityLabel: 'Go to Language Support screen',
+        }}
+      />
       <Drawer.Screen
         name="Help & Support"
         component={() => {
@@ -111,21 +145,32 @@ const DrawerNavigator = () => {
             </View>
           );
         }}
+        options={{
+          drawerAccessibilityLabel: 'Navigate to Help & Support',
+        }}
       />
-      <Drawer.Screen name="My Profile">
-        {() => (
+      <Drawer.Screen
+        name="My Profile"
+        component={() => (
           <Stack.Navigator>
             <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
           </Stack.Navigator>
         )}
-      </Drawer.Screen>
-      <Drawer.Screen name="Notifications">
-        {() => (
+        options={{
+          drawerAccessibilityLabel: 'Navigate to Profile screen',
+        }}
+      />
+      <Drawer.Screen
+        name="Notifications"
+        component={() => (
           <View style={styles.screen}>
             <Notification />
           </View>
         )}
-      </Drawer.Screen>
+        options={{
+          drawerAccessibilityLabel: 'View Notifications',
+        }}
+      />
     </Drawer.Navigator>
   );
 };
@@ -135,10 +180,26 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Welcome">
-        <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-        <Stack.Screen name="Drawer" component={DrawerNavigator} options={{ headerShown: false }} />
+        <Stack.Screen
+          name="Welcome"
+          component={WelcomeScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Signup"
+          component={Signup}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Drawer"
+          component={DrawerNavigator}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
