@@ -14,6 +14,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 
 const ProjectPage = () => {
+  const navigation = useNavigation();
   const [projects, setProjects] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -82,14 +83,14 @@ const ProjectPage = () => {
   };
   
   const buttonClick = async () => {
-    const navigation = useNavigation();
+   
   
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (token) {
         setModalVisible(true);
       } else {
-        Alert.alert("Unauthorized", "You need to log in to access this feature.");
+        // Alert.alert("Unauthorized", "You need to log in to access this feature.");
         navigation.navigate("Login");
       }
     } catch (error) {
