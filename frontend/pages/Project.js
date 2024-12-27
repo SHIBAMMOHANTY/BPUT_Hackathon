@@ -86,7 +86,7 @@ const ProjectPage = () => {
    
   
     try {
-      const token = await AsyncStorage.getItem("userToken");
+      const token = await AsyncStorage.getItem("authToken");
       if (token) {
         setModalVisible(true);
       } else {
