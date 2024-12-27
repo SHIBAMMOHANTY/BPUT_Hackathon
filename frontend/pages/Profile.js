@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -81,7 +82,7 @@ const ProfileScreen = () => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.logoutButton}
-        onPress={() => alert("Logout pressed")}
+        onPress={() => AsyncStorage.removeItem("authToken")}
       >
         <Text style={styles.logoutButtonText}>Logout</Text>
       </TouchableOpacity>
