@@ -121,7 +121,7 @@ const DrawerNavigator = () => {
         name="Home"
         component={MainTabNavigator}
         options={{
-          drawerAccessibilityLabel: 'Navigate to Home screen',
+          drawerAccessibilityLabel: 'Hii to Home screen',
         }}
       />
       <Drawer.Screen
