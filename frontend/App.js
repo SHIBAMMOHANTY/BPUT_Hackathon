@@ -8,8 +8,8 @@ import { View, Text, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-
 
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
-import Events from './pages/Events';
-import Project from './pages/Project';
+import Events from './pages/ProjectPage';
+import Project from './pages/ReportPage';
 import Profile from './pages/Profile';
 import Notification from './pages/Notification';
 import WelcomeScreen from './pages/Welcome';
