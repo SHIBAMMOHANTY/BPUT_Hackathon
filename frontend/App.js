@@ -19,6 +19,8 @@ import WelcomeScreen from './pages/Welcome';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import LanguageSupport from './pages/LanguageSupport';
+import Verify from './pages/VerifyDashBoard';
+import ProposalForm from './pages/Proposal';
 
 // Create Navigators
 const Drawer = createDrawerNavigator();
@@ -144,10 +146,25 @@ const DrawerNavigator = () => {
           </Stack.Navigator>
         )}
       </Drawer.Screen>
+      
       <Drawer.Screen name="Notifications">
         {() => (
           <View style={styles.screen}>
             <Notification />
+          </View>
+        )}
+      </Drawer.Screen>
+      <Drawer.Screen name="Proposal">
+        {() => (
+          <View style={styles.screen}>
+            <ProposalForm />
+          </View>
+        )}
+      </Drawer.Screen>
+      <Drawer.Screen name="Verify">
+        {() => (
+          <View style={styles.screen}>
+            <Verify />
           </View>
         )}
       </Drawer.Screen>
