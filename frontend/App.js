@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwtDecode from 'jwt-decode';
 
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
+import InvestorDashboard from './pages/InvestorDashboard';
 import Events from './pages/ProjectPage';
 import Project from './pages/ReportPage';
 import Profile from './pages/Profile';
@@ -17,44 +20,10 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import LanguageSupport from './pages/LanguageSupport';
 
-
 // Create Navigators
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-
-// Main Bottom Tab Navigator
-const MainTabNavigator = () => {
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size }) => {
-          let iconName;
-          if (route.name === 'Home') {
-            iconName = 'home';
-          } else if (route.name === 'Dashboard') {
-            iconName = 'analytics';
-          } else if (route.name === 'Campaign') {
-            iconName = 'calendar';
-          } else if (route.name === 'Project') {
-            iconName = 'briefcase';
-          }
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-        headerShown: false,
-      })}
-      tabBarOptions={{
-        activeTintColor: '#6366f1',
-        inactiveTintColor: 'gray',
-      }}
-    >
-      <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Dashboard" component={Dashboard} />
-      <Tab.Screen name="Campaign" component={Events} />
-      <Tab.Screen name="Project" component={Project} />
-    </Tab.Navigator>
-  );
-};
 
 // Function to redirect to WhatsApp
 const openWhatsApp = () => {
@@ -73,11 +42,65 @@ const openWhatsApp = () => {
     .catch((err) => console.error('An error occurred', err));
 };
 
+// Main Bottom Tab Navigator
+const MainTabNavigator = ({ navigation }) => {
+  const [role, setRole] = useState('');
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const token = await AsyncStorage.getItem('authToken');
+      if (token) {
+        try {
+          const decodedToken = jwtDecode(token);
+          console.log('Decoded Token:', decodedToken);
+          setRole(decodedToken.role);
+        } catch (error) {
+          console.error('Error decoding token:', error);
+        }
+      }
+    
+    };
+
+    fetchToken();
+  }, []);
+console.log("-------->",role);
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName;
+          if (route.name === 'Home') {
+            iconName = 'home';
+          } else if (route.name === 'Dashboard') {
+            iconName = 'analytics';
+          } else if (route.name === 'Campaign') {
+            iconName = 'calendar';
+          } else if (route.name === 'Project') {
+            iconName = 'briefcase';
+          }
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        headerShown: false,
+        tabBarActiveTintColor: '#6366f1',
+        tabBarInactiveTintColor: 'gray',
+      })}
+    >
+      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen
+        name="Dashboard"
+        component={role === 'investor' ? InvestorDashboard : Dashboard}
+      />
+      <Tab.Screen name="Campaign" component={Events} />
+      <Tab.Screen name="Project" component={Project} />
+    </Tab.Navigator>
+  );
+};
+
 // Drawer Navigator (Hamburger Menu)
 const DrawerNavigator = () => {
   return (
     <Drawer.Navigator
-      screenOptions={({ navigation }) => ({
+      screenOptions={{
         headerStyle: {
           backgroundColor: '#4e73df',
         },
@@ -93,7 +116,7 @@ const DrawerNavigator = () => {
             <Ionicons name="notifications-outline" size={24} color="white" />
           </TouchableOpacity>
         ),
-      })}
+      }}
     >
       <Drawer.Screen name="Home" component={MainTabNavigator} />
       <Drawer.Screen name="Language Support">

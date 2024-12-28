@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { Card } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LineChart } from 'react-native-chart-kit';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const Dashboard = () => {
   const [expandedCard, setExpandedCard] = useState(null);
+  const [token, setToken] = useState(null);
+  useEffect(() => {
+    const fetchToken = async () => {
+      const token = await AsyncStorage.getItem('authToken');
+      setToken(token);
+    };
+    fetchToken();
+  }, []);
+
 
   const dummyData = {
     fundsRaised: [
@@ -31,8 +42,21 @@ const Dashboard = () => {
     setExpandedCard(expandedCard === cardName ? null : cardName);
   };
 
+  const navigation = useNavigation();
+
+  const handleLoginNavigation = () => {
+    navigation.navigate('Login');
+  };
+
   return (
     <ScrollView style={styles.container}>
+      {!token ?   <View >
+      <Text style={styles.expandedText}>Please login first</Text>
+      <TouchableOpacity onPress={handleLoginNavigation}>
+        <Text style={styles.loginLink}>Go to Login</Text>
+      </TouchableOpacity>
+    </View>:
+
       <View style={styles.cardContainer}>
         {/* Total Funds Raised */}
         <Card style={styles.card}>
@@ -141,11 +165,24 @@ const Dashboard = () => {
         )}
       </Card>
       </View>
+      }
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  expandedText: {
+    fontSize: 18,
+    color: '#555',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  loginLink: {
+    fontSize: 18,
+    color: '#4e73df',
+    textDecorationLine: 'underline',
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     padding: 20,
@@ -234,6 +271,7 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#2196F3',
   },
+  
   
 });
 
