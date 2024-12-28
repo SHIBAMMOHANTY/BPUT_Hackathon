@@ -1,4 +1,3 @@
-// models/User.js
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
@@ -14,6 +13,15 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    role: {
+        type: String,
+        enum: ['INVESTER', 'NGO', 'BUSINESS OWNER'],
+        required: true
+    },
+   
+    disabilityType: {
+        type: String, // Store disability type selected by Business Owner
     }
 }, { timestamps: true });
 
