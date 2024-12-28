@@ -21,6 +21,11 @@ import Login from './pages/Login';
 import LanguageSupport from './pages/LanguageSupport';
 import Verify from './pages/VerifyDashBoard';
 import ProposalForm from './pages/Proposal';
+import PartnershipPortal from './pages/PartnershipPortal';
+import KnowledgeHub from './pages/KnowledgeHub';
+import EventPlatform from './pages/EventPlatform';
+import Csr from './pages/Csr';
+import JoinPilot from './pages/Pilot';
 
 // Create Navigators
 const Drawer = createDrawerNavigator();
@@ -77,7 +82,7 @@ console.log("-------->",role);
             iconName = 'analytics';
           } else if (route.name === 'Campaign') {
             iconName = 'calendar';
-          } else if (route.name === 'Project') {
+          } else if (route.name === 'Report') {
             iconName = 'briefcase';
           }
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -93,7 +98,7 @@ console.log("-------->",role);
         component={role === 'investor' ? InvestorDashboard : Dashboard}
       />
       <Tab.Screen name="Campaign" component={Events} />
-      <Tab.Screen name="Project" component={Project} />
+      <Tab.Screen name="Report" component={Project} />
     </Tab.Navigator>
   );
 };
@@ -165,6 +170,41 @@ const DrawerNavigator = () => {
         {() => (
           <View style={styles.screen}>
             <Verify />
+          </View>
+        )}
+      </Drawer.Screen>
+      <Drawer.Screen name="Partenership Proposal">
+        {() => (
+          <View style={styles.screen}>
+            <PartnershipPortal />
+          </View>
+        )}
+      </Drawer.Screen>
+      <Drawer.Screen name="Event Platform">
+        {() => (
+          <View style={styles.screen}>
+            <EventPlatform />
+          </View>
+        )}
+      </Drawer.Screen>
+      <Drawer.Screen name=" Knowledge Hub">
+        {() => (
+          <View style={styles.screen}>
+            <KnowledgeHub />
+          </View>
+        )}
+      </Drawer.Screen>
+      <Drawer.Screen name=" CSR Tracker">
+        {() => (
+          <View style={styles.screen}>
+            <Csr />
+          </View>
+        )}
+      </Drawer.Screen>
+      <Drawer.Screen name="Join Pilot Program">
+        {() => (
+          <View style={styles.screen}>
+            <JoinPilot />
           </View>
         )}
       </Drawer.Screen>
