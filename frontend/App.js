@@ -159,49 +159,49 @@ const DrawerNavigator = () => {
           </View>
         )}
       </Drawer.Screen>
-      <Drawer.Screen name="Proposal">
+      {/* <Drawer.Screen name="Proposal">
         {() => (
           <View style={styles.screen}>
             <ProposalForm />
           </View>
         )}
-      </Drawer.Screen>
-      <Drawer.Screen name="Verify">
+      </Drawer.Screen> */}
+      {/* <Drawer.Screen name="Verify">
         {() => (
           <View style={styles.screen}>
             <Verify />
           </View>
         )}
-      </Drawer.Screen>
-      <Drawer.Screen name="Partenership Proposal">
+      </Drawer.Screen> */}
+      {/* <Drawer.Screen name="Partenership Proposal">
         {() => (
           <View style={styles.screen}>
             <PartnershipPortal />
           </View>
         )}
-      </Drawer.Screen>
-      <Drawer.Screen name="Event Platform">
+      </Drawer.Screen> */}
+      <Drawer.Screen name="Events">
         {() => (
           <View style={styles.screen}>
             <EventPlatform />
           </View>
         )}
       </Drawer.Screen>
-      <Drawer.Screen name=" Knowledge Hub">
+      {/* <Drawer.Screen name=" Knowledge Hub">
         {() => (
           <View style={styles.screen}>
             <KnowledgeHub />
           </View>
         )}
-      </Drawer.Screen>
-      <Drawer.Screen name=" CSR Tracker">
+      </Drawer.Screen> */}
+      {/* <Drawer.Screen name=" CSR Tracker">
         {() => (
           <View style={styles.screen}>
             <Csr />
           </View>
         )}
-      </Drawer.Screen>
-      <Drawer.Screen name="Join Pilot Program">
+      </Drawer.Screen> */}
+      <Drawer.Screen name="Community">
         {() => (
           <View style={styles.screen}>
             <JoinPilot />
