@@ -13,7 +13,8 @@ import {
 import { Video } from 'expo-av';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Donate from './Donate';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigation } from '@react-navigation/native';
+
 
 const { height, width } = Dimensions.get('window');
 
@@ -51,7 +52,7 @@ const ProjectPage = ({ navigation }) => {
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [commentText, setCommentText] = useState('');
   const [commentModalVisible, setCommentModalVisible] = useState(false);
-  // const navigate = useNavigate();
+   const navigate =useNavigation()
 
   // Function to handle like status and toggle play/pause
   const handleLikeAndTogglePlay = (id, eventType) => {
@@ -139,7 +140,7 @@ const ProjectPage = ({ navigation }) => {
           <Icon name="share" size={36} color="white" />
           <Text style={styles.actionCount}>{item.shares}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity style={styles.actionButton}  onPress={()=>navigate.navigate('Donate')}>
           <Icon name="money" size={36} color="white" />
         </TouchableOpacity>
       </View>
