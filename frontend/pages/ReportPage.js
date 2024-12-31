@@ -108,8 +108,8 @@ const ReportPage = () => {
               onChangeText={(text) => handleInputChange("details", text)}
             />
             <InputField
-              label="Required Skills"
-              placeholder="Enter Required Skills"
+              label="Disability Type"
+              placeholder="Disability Type"
               value={formData.skills}
               onChangeText={(text) => handleInputChange("skills", text)}
             />
