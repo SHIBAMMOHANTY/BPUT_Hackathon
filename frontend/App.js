@@ -19,12 +19,12 @@ import WelcomeScreen from './pages/Welcome';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import LanguageSupport from './pages/LanguageSupport';
-import Verify from './pages/VerifyDashBoard';
-import ProposalForm from './pages/Proposal';
-import PartnershipPortal from './pages/PartnershipPortal';
-import KnowledgeHub from './pages/KnowledgeHub';
+// import Verify from './pages/VerifyDashBoard';
+// import ProposalForm from './pages/Proposal';
+// import PartnershipPortal from './pages/PartnershipPortal';
+// import KnowledgeHub from './pages/KnowledgeHub';
 import EventPlatform from './pages/EventPlatform';
-import Csr from './pages/Csr';
+// import Csr from './pages/Csr';
 import JoinPilot from './pages/Pilot';
 import Donate from './pages/Donate';
 
