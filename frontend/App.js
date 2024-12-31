@@ -26,6 +26,7 @@ import KnowledgeHub from './pages/KnowledgeHub';
 import EventPlatform from './pages/EventPlatform';
 import Csr from './pages/Csr';
 import JoinPilot from './pages/Pilot';
+import Donate from './pages/Donate';
 
 // Create Navigators
 const Drawer = createDrawerNavigator();
@@ -220,6 +221,7 @@ const App = () => {
         <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="Donate" component={Donate} options={{ headerShown: false }} />
         <Stack.Screen name="Drawer" component={DrawerNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
