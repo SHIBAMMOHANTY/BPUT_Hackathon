@@ -13,7 +13,7 @@ import {
 import { Video } from 'expo-av';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Donate from './Donate';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 const { height, width } = Dimensions.get('window');
 
@@ -51,7 +51,7 @@ const ProjectPage = ({ navigation }) => {
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [commentText, setCommentText] = useState('');
   const [commentModalVisible, setCommentModalVisible] = useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // Function to handle like status and toggle play/pause
   const handleLikeAndTogglePlay = (id, eventType) => {
