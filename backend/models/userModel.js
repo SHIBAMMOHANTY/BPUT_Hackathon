@@ -5,37 +5,43 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    username: {
-        type: String,
-        required: true,
-        unique: true,
-    },
     phone: {
         type: String,
-        required: true,
+      
     },
     email: {
         type: String,
         required: true,
         unique: true,
     },
-    atmpin: {
-        type: String,
-        required: true,
-    },
+ 
     password: {
         type: String,
         required: true,
     },
-    account_number: {
-        type: String,
-        required: true,
-        unique: true,
-    },
+  
     createdAt: {
         type: Date,
         default: Date.now,
     },
+    role: {
+        type: String,
+        enum: ['user', 'business', 'ngo'], 
+        default: 'user',                
+    },
+    disabilityType: {
+        type: String,
+        default: 'none',
+        enum: ['none', 'physical', 'hearing', 'visual', 'speech', 'cognitive', 'psychological'],
+    },
+    donations: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'CreatePost', // Posts where the user made donations
+    }],
+    likedPosts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'CreatePost', // Posts the user liked
+    }],
 });
 
 const User = mongoose.model('User', userSchema);

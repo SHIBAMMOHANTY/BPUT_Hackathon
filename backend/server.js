@@ -4,10 +4,12 @@ const cors = require('cors');
 const dotenv = require('dotenv').config();
 
 // Import Routes
-const postRoutes = require('./routes/postRoutes');
-const socialWorkRoutes = require('./routes/socialWorkRoutes');
-const jobRoutes = require('./routes/jobRoutes');
+
+const createpostRoutes = require('./routes/createpostRoutes');
+
+
 const userRoutes = require('./routes/userRoutes');
+
 
 // Initialize the Express app
 const app = express();
@@ -22,10 +24,9 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
     .catch((err) => console.log('MongoDB connection error: ', err));
 
 // Use Routes
-app.use('/api/posts', postRoutes);
-app.use('/api/socialworks', socialWorkRoutes);
-app.use('/api/jobs', jobRoutes);
+
 app.use('/api/users', userRoutes);
+app.use('/api/post', createpostRoutes);
 
 // Default Route for Testing
 app.get('/', (req, res) => {
