@@ -1,21 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const createpostController = require('../controllers/createpostController');
+// const {checkRole } = require('../middleware/authonticate');
 
 // Create a post
-router.post('/createpost', createpostController.createpost);
-
-// Get all posts
-router.get('/getallpost', createpostController.getPosts);
-
-// Get a post by ID
-router.get('/getpost/:id', createpostController.getPostById);
-
-// Update a post
-router.put('/updatepost/:id', createpostController.updatePost);
-
-// Delete a post
-router.delete('/deletepost/:id', createpostController.deletePost);
+router.post('/posts',createpostController.createPost);
+router.get('/posts',  createpostController.getPosts);
+router.get('/posts/:id',  createpostController.getPostById);
+router.put('/posts/:id',createpostController.updatePost);
+    //   checkRole(['business', 'ngo']),
+router.delete('/posts/:id',  createpostController.deletePost);
+router.post('/posts/:id/like',  createpostController.likePost);
+router.post('/messages',  createpostController.sendMessage);
 
 
 
