@@ -77,10 +77,6 @@ exports.deleteUser = async (req, res) => {
 
 
 // Login a user
-// const jwt = require('jsonwebtoken');
-// const bcrypt = require('bcryptjs');
-// const User = require('../models/User'); // Assuming your User model is in `models/User`
-
 exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
 
