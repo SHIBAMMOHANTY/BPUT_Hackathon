@@ -11,7 +11,8 @@ import LocationPicker from "../component/Entryinfo/LocationPicker";
 import MediaUploader from "../component/Entryinfo/MediaUploader";
 
 const ReportPage = () => {
-  const [selectedTab, setSelectedTab] = useState("NGO/Business");
+  const [selectedTab, setSelectedTab] = useState("Social Work");
+
   const [formData, setFormData] = useState({
     title: "",
     details: "",
@@ -132,7 +133,7 @@ const ReportPage = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.tabs}>
+      {/* <View style={styles.tabs}>
         {["NGO/Business", "Social Work", "Job"].map((tab) => (
           <TouchableOpacity
             key={tab}
@@ -146,7 +147,7 @@ const ReportPage = () => {
             </Text>
           </TouchableOpacity>
         ))}
-      </View>
+      </View> */}
 
       <ScrollView contentContainerStyle={styles.form}>
         {renderFormFields()}
