@@ -66,7 +66,7 @@ exports.getPostById = async (req, res) => {
 
 exports.updatePost = async (req, res) => {
     const { id } = req.params;
-    const { title, description, media, mediaType, requiredAmount, company, location, salary } = req.body;
+    const { title, description, media, mediaType, requiredAmount, company, location, salary,role } = req.body;
 
     try {
         const post = await createpostmodal.findById(id);
@@ -76,7 +76,7 @@ exports.updatePost = async (req, res) => {
         }
 
         // Check user role for restricted fields
-        if (['requiredAmount', 'company', 'salary'].some(field => req.body[field]) && !['business', 'ngo'].includes(req.user.role)) {
+        if (['requiredAmount', 'company', 'salary'].some(field => req.body[field]) && !['business', 'ngo'].includes(role)) {
             return res.status(403).json({ message: 'Access denied to these fields' });
         }
 
@@ -88,7 +88,8 @@ exports.updatePost = async (req, res) => {
                 media,
                 mediaType,
                 location,
-                ...(req.user.role === 'business' || req.user.role === 'ngo' ? { requiredAmount, company, salary } : {}),
+                role,
+                ...(role === 'business' || role === 'ngo' ? { requiredAmount, company, salary } : {}),
             },
             { new: true }
         );
@@ -136,19 +137,48 @@ exports.likePost = async (req, res) => {
 };
 
 // Message route
-exports.sendMessage = async (req, res) => {
-    const { recipientId, message } = req.body;
-    try {
-        const recipient = await User.findById(recipientId);
 
-        if (!recipient) {
-            return res.status(404).json({ message: 'Recipient not found' });
+exports.addCommentToPost = async (req, res) => {
+    const { postId, userId, content } = req.body;
+
+    // Validate input
+    if (!postId || !userId || !content) {
+        return res.status(400).json({ message: 'Post ID, User ID, and content are required.' });
+    }
+
+    try {
+        // Find the post by ID
+        const post = await createpostmodal.findById(postId);
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found.' });
         }
 
-        // Add your logic to save or send the message
+        // Find the user by ID
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
 
-        res.status(200).json({ message: 'Message sent successfully' });
-    } catch (err) {
-        res.status(500).json({ message: 'Failed to send message', error: err.message });
+        // Add the new comment
+        const newComment = {
+            userId,
+            content,
+            createdAt: new Date(),
+        };
+        post.comments.push(newComment);
+
+        // Save the updated post
+        await post.save();
+
+        res.status(200).json({
+            message: 'Comment added successfully.',
+            comment: newComment,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Failed to add comment.',
+            error: error.message,
+        });
     }
 };
+
