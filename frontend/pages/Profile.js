@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -7,52 +6,64 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  TextInput,
+  Alert,
   ActivityIndicator,
   Modal,
-  TextInput,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 const ProfileScreen = () => {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editedData, setEditedData] = useState({ name: "", email: "" }); // Fix: Add state for editedData
-  const navigation = useNavigation();
+  const [editedData, setEditedData] = useState({ name: "", email: "", phone: "" });
 
   useEffect(() => {
-    const checkAuthToken = async () => {
-      const token = await AsyncStorage.getItem("authToken");
-      if (!token) {
-        navigation.replace("Login"); // Redirect to Login if no token
-      }
+    const fetchData = async () => {
+      setTimeout(() => {
+        const fetchedData = {
+          name: "John Doe",
+          role: "Investor",
+          profilePicture: "https://via.placeholder.com/150",
+          profileInfo: { email: "john.doe@example.com", phone: "+1 234 567 890" },
+          posts: [
+            { id: 1, title: "Post 1" },
+            { id: 2, title: "Post 2" },
+            { id: 3, title: "Post 3" },
+            { id: 4, title: "Post 4" },
+          ],
+        };
+        setUserData(fetchedData);
+        setEditedData({ ...fetchedData.profileInfo, name: fetchedData.name });
+        setIsLoading(false);
+      }, 1500);
     };
-
-    checkAuthToken();
-
-    // Simulated API call
-    setTimeout(() => {
-      const fetchedData = {
-        name: "John Doe",
-        email: "john.doe@example.com",
-        role: "Investor",
-        profilePicture: "https://via.placeholder.com/150", // Replace with actual profile picture
-        disabilityType: "None",
-      };
-      setUserData(fetchedData);
-      setEditedData({ name: fetchedData.name, email: fetchedData.email }); // Initialize editedData
-      setIsLoading(false);
-    }, 1500);
-  }, [navigation]);
-
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem("authToken");
-    navigation.replace("Drawer"); // Navigate to Drawer screen after logout
-  };
+    fetchData();
+  }, []);
 
   const handleEditSave = () => {
-    setUserData({ ...userData, ...editedData });
-    setIsModalVisible(false);
+    if (!editedData.name || !editedData.email || !editedData.phone) {
+      Alert.alert("Error", "Please fill all the fields.");
+    } else {
+      setUserData({ ...userData, name: editedData.name, profileInfo: { email: editedData.email, phone: editedData.phone } });
+      setIsModalVisible(false);
+    }
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Delete Account",
+      "Are you sure you want to delete your account?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => console.log("Account deleted"),
+        },
+      ]
+    );
   };
 
   if (isLoading) {
@@ -65,52 +76,50 @@ const ProfileScreen = () => {
   }
 
   return (
-    <>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
-        {/* Header Section */}
-        <View style={styles.headerContainer}>
-          <Image
-            source={{ uri: userData.profilePicture }}
-            style={styles.profileImage}
-          />
+    <ScrollView style={styles.container}>
+      <View style={styles.headerContainer}>
+        <Image source={{ uri: userData.profilePicture }} style={styles.profileImage} />
+        <View style={styles.nameRoleContainer}>
           <Text style={styles.name}>{userData.name}</Text>
-          <Text style={styles.role}>{userData.role}</Text>
-        </View>
-
-        {/* Profile Details */}
-        <View style={styles.detailsContainer}>
-          <Text style={styles.sectionTitle}>Profile Information</Text>
-
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>Email</Text>
-            <Text style={styles.cardValue}>{userData.email}</Text>
-          </View>
-
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>Disability Type</Text>
-            <Text style={styles.cardValue}>{userData.disabilityType}</Text>
-          </View>
-
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>Role</Text>
-            <Text style={styles.cardValue}>{userData.role}</Text>
+          <View style={styles.roleContainer}>
+            <Text style={styles.role}>{userData.role}</Text>
+            <TouchableOpacity onPress={() => setIsModalVisible(true)}>
+              <Ionicons name="pencil" size={20} color="#4C8DFF" />
+            </TouchableOpacity>
           </View>
         </View>
+      </View>
+      <View style={styles.badgeContainer}>
+        <Text style={styles.badgeText}>New Profile Badge</Text>
+      </View>
 
-        {/* Buttons */}
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => setIsModalVisible(true)}
-        >
-          <Text style={styles.editButtonText}>Edit Profile</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutButtonText}>Logout</Text>
-        </TouchableOpacity>
-      </ScrollView>
+      <View style={styles.profileInfo}>
+        <Text style={styles.sectionTitle}>Profile Information</Text>
+        <View style={styles.infoCard}>
+          <Text>Email: {userData.profileInfo.email}</Text>
+        </View>
+        <View style={styles.infoCard}>
+          <Text>Phone: {userData.profileInfo.phone}</Text>
+        </View>
+      </View>
+
+      <View style={styles.postsSection}>
+        <Text style={styles.sectionTitle}>Posts</Text>
+        <View style={styles.postsContainer}>
+          {userData.posts.map((post) => (
+            <View key={post.id} style={styles.postCard}>
+              <Text>{post.title}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount}>
+        <Text style={styles.deleteButtonText}>Delete Account</Text>
+      </TouchableOpacity>
+
+    
+
       <Modal
         visible={isModalVisible}
         animationType="slide"
@@ -124,191 +133,67 @@ const ProfileScreen = () => {
               style={styles.input}
               placeholder="Name"
               value={editedData.name}
-              onChangeText={(text) =>
-                setEditedData({ ...editedData, name: text })
-              }
+              onChangeText={(text) => setEditedData({ ...editedData, name: text })}
             />
             <TextInput
               style={styles.input}
               placeholder="Email"
               value={editedData.email}
-              onChangeText={(text) =>
-                setEditedData({ ...editedData, email: text })
-              }
+              onChangeText={(text) => setEditedData({ ...editedData, email: text })}
             />
-            <TouchableOpacity
-              style={styles.saveButton}
-              onPress={handleEditSave}
-            >
+            <TextInput
+              style={styles.input}
+              placeholder="Phone"
+              value={editedData.phone}
+              onChangeText={(text) => setEditedData({ ...editedData, phone: text })}
+            />
+            <TouchableOpacity style={styles.saveButton} onPress={handleEditSave}>
               <Text style={styles.saveButtonText}>Save</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setIsModalVisible(false)}
-            >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
-    </>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F7F9FC",
-    width: "100%",
-  },
-  centeredContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F7F9FC",
-  },
-  loadingText: {
-    fontSize: 16,
-    color: "#4C8DFF",
-    marginTop: 10,
-  },
-  headerContainer: {
-    backgroundColor: "#4C8DFF",
-    paddingVertical: 16,
-    alignItems: "center",
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    width: "100%",
-  },
-  profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 3,
-    borderColor: "#fff",
-    marginBottom: 10,
-  },
-  name: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-  role: {
-    fontSize: 18,
-    color: "#DDE6F5",
-    marginTop: 5,
-  },
-  detailsContainer: {
-    marginTop: 20,
-    paddingHorizontal: 20,
-    width: "100%",
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#1F2937",
-    marginBottom: 15,
-  },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 3,
-    width: "100%",
-  },
-  cardLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#6B7280",
-  },
-  cardValue: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#1F2937",
-    marginTop: 5,
-  },
-  editButton: {
-    backgroundColor: "#4C8DFF",
-    paddingVertical: 15,
-    borderRadius: 30,
-    alignItems: "center",
-    marginTop: 20,
-    width: "90%",
-    alignSelf: "center",
-  },
-  editButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  logoutButton: {
-    backgroundColor: "#FF5757",
-    paddingVertical: 15,
-    borderRadius: 30,
-    alignItems: "center",
-    marginTop: 10,
-    width: "90%",
-    alignSelf: "center",
-  },
-  logoutButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    width: "90%",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
-  input: {
-    width: "100%",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
+  container: { flex: 1, padding: 20, backgroundColor: "#FFF" },
+  headerContainer: { flexDirection: "row", alignItems: "center", marginBottom: 0 },
+  profileImage: { width: 80, height: 80, borderRadius: 40, marginRight: 20 },
+  nameRoleContainer: { flex: 1 },
+  name: { fontSize: 22, fontWeight: "bold", color: "#333" },
+  roleContainer: { flexDirection: "row", alignItems: "center", marginTop: 5 },
+  role: { fontSize: 16, marginRight: 10, color: "#4C8DFF" },
+  profileInfo: { marginBottom: 20 },
+  sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10, color: "#333" },
+  infoCard: { backgroundColor: "#F5F5F5", padding: 15, borderRadius: 10, marginBottom: 10 },
+  postsSection: { marginBottom: 20 },
+  postsContainer: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
+  postCard: {
+    width: "30%",
+    backgroundColor: "#F5F5F5",
     padding: 10,
-    marginBottom: 15,
-  },
-  saveButton: {
-    backgroundColor: "#4C8DFF",
-    paddingVertical: 10,
-    borderRadius: 5,
-    width: "100%",
+    borderRadius: 10,
     alignItems: "center",
     marginBottom: 10,
   },
-  saveButtonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-  cancelButton: {
-    backgroundColor: "#FF5757",
-    paddingVertical: 10,
-    borderRadius: 5,
-    width: "100%",
+  deleteButton: { backgroundColor: "#FF0000", padding: 15, borderRadius: 10, marginTop: 20 },
+  deleteButtonText: { color: "#FFF", textAlign: "center", fontWeight: "bold" },
+  modalContainer: { flex: 1, justifyContent: "center", backgroundColor: "rgba(0,0,0,0.5)" },
+  modalContent: { backgroundColor: "#FFF", padding: 20, borderRadius: 10, marginHorizontal: 20 },
+  modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 20 },
+  input: { borderBottomWidth: 1, borderBottomColor: "#4C8DFF", marginBottom: 20, fontSize: 16 },
+  saveButton: { backgroundColor: "#4C8DFF", padding: 15, borderRadius: 10 },
+  saveButtonText: { color: "#FFF", textAlign: "center", fontWeight: "bold" },
+  badgeContainer: {
+    backgroundColor: "#FFD700",
+    padding: 18,
+    borderRadius: 7,
     alignItems: "center",
+    marginVertical: 14,
   },
-  cancelButtonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
+  badgeText: { color: "#FFF", fontWeight: "bold" },
 });
 
 export default ProfileScreen;
