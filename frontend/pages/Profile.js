@@ -264,11 +264,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    marginBottom:50,
   },
   deleteButtonText: { 
     color: "#FFF", 
     fontSize: 16, 
-    fontWeight: "600" 
+    fontWeight: "600" ,
+    
   },
   modalContainer: { 
     flex: 1, 
