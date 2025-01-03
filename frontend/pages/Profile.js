@@ -158,42 +158,164 @@ const ProfileScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#FFF" },
-  headerContainer: { flexDirection: "row", alignItems: "center", marginBottom: 0 },
-  profileImage: { width: 80, height: 80, borderRadius: 40, marginRight: 20 },
-  nameRoleContainer: { flex: 1 },
-  name: { fontSize: 22, fontWeight: "bold", color: "#333" },
-  roleContainer: { flexDirection: "row", alignItems: "center", marginTop: 5 },
-  role: { fontSize: 16, marginRight: 10, color: "#4C8DFF" },
-  profileInfo: { marginBottom: 20 },
-  sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10, color: "#333" },
-  infoCard: { backgroundColor: "#F5F5F5", padding: 15, borderRadius: 10, marginBottom: 10 },
-  postsSection: { marginBottom: 20 },
-  postsContainer: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
-  postCard: {
-    width: "30%",
-    backgroundColor: "#F5F5F5",
+  container: { 
+    flex: 1, 
+    padding: 20, 
+    backgroundColor: "#F9FAFB" 
+  },
+  headerContainer: { 
+    flexDirection: "row", 
+    alignItems: "center", 
+    marginBottom: 20 
+  },
+  profileImage: { 
+    width: 90, 
+    height: 90, 
+    borderRadius: 45, 
+    borderWidth: 2, 
+    borderColor: "#4C8DFF", 
+    marginRight: 20 
+  },
+  nameRoleContainer: { 
+    flex: 1 
+  },
+  name: { 
+    fontSize: 24, 
+    fontWeight: "bold", 
+    color: "#1A202C" 
+  },
+  roleContainer: { 
+    flexDirection: "row", 
+    alignItems: "center", 
+    marginTop: 5 
+  },
+  role: { 
+    fontSize: 16, 
+    marginRight: 10, 
+    color: "#4C8DFF", 
+    fontWeight: "600" 
+  },
+  badgeContainer: {
+    backgroundColor: "#FFD700",
     padding: 10,
     borderRadius: 10,
     alignItems: "center",
-    marginBottom: 10,
+    marginVertical: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  deleteButton: { backgroundColor: "#FF0000", padding: 15, borderRadius: 10, marginTop: 20 },
-  deleteButtonText: { color: "#FFF", textAlign: "center", fontWeight: "bold" },
-  modalContainer: { flex: 1, justifyContent: "center", backgroundColor: "rgba(0,0,0,0.5)" },
-  modalContent: { backgroundColor: "#FFF", padding: 20, borderRadius: 10, marginHorizontal: 20 },
-  modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 20 },
-  input: { borderBottomWidth: 1, borderBottomColor: "#4C8DFF", marginBottom: 20, fontSize: 16 },
-  saveButton: { backgroundColor: "#4C8DFF", padding: 15, borderRadius: 10 },
-  saveButtonText: { color: "#FFF", textAlign: "center", fontWeight: "bold" },
-  badgeContainer: {
-    backgroundColor: "#FFD700",
-    padding: 18,
-    borderRadius: 7,
+  badgeText: { 
+    color: "#FFF", 
+    fontWeight: "bold" 
+  },
+  profileInfo: { 
+    marginBottom: 20 
+  },
+  sectionTitle: { 
+    fontSize: 20, 
+    fontWeight: "700", 
+    marginBottom: 10, 
+    color: "#1A202C" 
+  },
+  infoCard: { 
+    backgroundColor: "#FFFFFF", 
+    padding: 15, 
+    borderRadius: 10, 
+    marginBottom: 10, 
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  postsSection: { 
+    marginBottom: 20 
+  },
+  postsContainer: { 
+    flexDirection: "row", 
+    flexWrap: "wrap", 
+    justifyContent: "space-between" 
+  },
+  postCard: {
+    width: "47%",
+    height:150,
+    backgroundColor: "#FFFFFF",
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
     alignItems: "center",
-    marginVertical: 14,
   },
-  badgeText: { color: "#FFF", fontWeight: "bold" },
+  deleteButton: { 
+    backgroundColor: "#E53E3E", 
+    padding: 15, 
+    borderRadius: 10, 
+    marginTop: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  deleteButtonText: { 
+    color: "#FFF", 
+    fontSize: 16, 
+    fontWeight: "600" 
+  },
+  modalContainer: { 
+    flex: 1, 
+    justifyContent: "center", 
+    backgroundColor: "rgba(0,0,0,0.5)" 
+  },
+  modalContent: { 
+    backgroundColor: "#FFF", 
+    padding: 20, 
+    borderRadius: 15, 
+    marginHorizontal: 20, 
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  modalTitle: { 
+    fontSize: 20, 
+    fontWeight: "bold", 
+    marginBottom: 20, 
+    color: "#1A202C" 
+  },
+  input: { 
+    borderBottomWidth: 1, 
+    borderBottomColor: "#4C8DFF", 
+    marginBottom: 20, 
+    fontSize: 16, 
+    paddingVertical: 5 
+  },
+  saveButton: { 
+    backgroundColor: "#4C8DFF", 
+    padding: 15, 
+    borderRadius: 10, 
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  saveButtonText: { 
+    color: "#FFF", 
+    fontWeight: "bold", 
+    fontSize: 16 
+  },
 });
+
 
 export default ProfileScreen;
