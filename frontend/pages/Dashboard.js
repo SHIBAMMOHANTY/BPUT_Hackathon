@@ -1,500 +1,241 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
-import { Card } from 'react-native-paper';
-import { MaterialIcons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Dimensions, Alert } from 'react-native';
+import { Icon } from 'react-native-elements';
 import { LineChart } from 'react-native-chart-kit';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import * as FileSystem from 'expo-file-system';
 
-const Dashboard = () => {
-  const [expandedCard, setExpandedCard] = useState(null);
-  const [token, setToken] = useState(null);
-  useEffect(() => {
-    const fetchToken = async () => {
-      const token = await AsyncStorage.getItem('authToken');
-      setToken(token);
+const Dashboard = ({ navigation }) => {
+  const screenWidth = Dimensions.get('window').width;
+
+  const cards = [
+    { id: '1', title: 'Donations Made', value: 15, icon: 'heart', graphData: [10, 15, 20, 25, 30, 35] },
+    { id: '2', title: 'Badges Earned', value: 7, icon: 'award', graphData: [2, 3, 5, 6, 7, 8] },
+    { id: '3', title: 'Total Invested', value: 1200, icon: 'money', graphData: [200, 400, 600, 800, 1000, 1200] },
+  ];
+
+  const activities = [
+    { id: '1', title: 'Donated to Clean Water Initiative', date: 'Jan 2, 2025' },
+    { id: '2', title: 'Posted: New Year Resolution!', date: 'Jan 1, 2025' },
+  ];
+
+  const [selectedGraphData, setSelectedGraphData] = useState(cards[0].graphData);
+  const [selectedCardId, setSelectedCardId] = useState(null);
+
+  const downloadReport = async () => {
+    const reportData = {
+      graphData: selectedGraphData,
+      date: new Date().toISOString(),
     };
-    fetchToken();
-  }, []);
+    
+    const fileUri = `${FileSystem.documentDirectory}report.json`;
+    
+    try {
+      // Write the JSON string to the file
+      await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(reportData, null, 2));
+      Alert.alert('Success', 'Report downloaded successfully!', [{ text: 'OK' }]);
+      
+      // Optionally, provide the user with the path where the report is saved
+      console.log('Report saved at:', fileUri);
 
-
-  const dummyData = {
-    fundsRaised: [
-      { month: 'January', amount: 5000 },
-      { month: 'February', amount: 10000 },
-      { month: 'March', amount: 15000 },
-    ],
-    projects: [
-      { name: 'Project A', amount: '$20,000' },
-      { name: 'Project B', amount: '$15,000' },
-      { name: 'Project C', amount: '$10,000' },
-    ],
-    investors: [
-      { name: 'Investor 1', project: 'Project A', amount: '$5,000' },
-      { name: 'Investor 2', project: 'Project B', amount: '$7,000' },
-      { name: 'Investor 3', project: 'Project C', amount: '$3,000' },
-      { name: 'Investor 4', project: 'Project A', amount: '$10,000' },
-      { name: 'Investor 5', project: 'Project B', amount: '$15,000' },
-    ],
+    } catch (error) {
+      Alert.alert('Error', 'Failed to download report. Please try again.', [{ text: 'OK' }]);
+      console.error('Download failed:', error);
+    }
   };
 
-  const toggleCard = (cardName) => {
-    setExpandedCard(expandedCard === cardName ? null : cardName);
-  };
+  const Header = () => (
+    <View style={styles.header}>
+      <Image
+        source={{ uri: 'https://via.placeholder.com/100' }}
+        style={styles.profilePicture}
+      />
+      <View>
+        <Text style={styles.userName}>John Doe</Text>
+        <Text style={styles.userEmail}>john.doe@example.com</Text>
+      </View>
+    </View>
+  );
 
-  const navigation = useNavigation();
+  const Card = ({ id, title, value, icon, graphData }) => (
+    <TouchableOpacity
+      style={[styles.card, selectedCardId === id && styles.selectedCard]}  // Apply selectedCard style conditionally
+      onPress={() => {
+        setSelectedGraphData(graphData);
+        setSelectedCardId(id);  // Set selected card ID
+      }}
+    >
+      <View style={styles.cardContent}>
+        <Icon name={icon} type="feather" size={24} color="#4CAF50" />
+        <Text style={styles.cardValue}>{value}</Text>
+        <Text style={styles.cardTitle}>{title}</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
-  const handleLoginNavigation = () => {
-    navigation.navigate('Login');
-  };
+  const ListHeaderComponent = () => (
+    <View>
+      <Header />
+      <FlatList
+        data={cards}
+        renderItem={({ item }) => <Card {...item} />}
+        keyExtractor={(item) => item.id}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.cardsContainer}
+        style={{ flexGrow: 0 }}
+      />
+      <Text style={styles.sectionTitle}>Performance Overview</Text>
+      <LineChart
+        data={{
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{ data: selectedGraphData, color: () => `#4CAF50`, strokeWidth: 2 }],
+        }}
+        width={screenWidth - 40}
+        height={220}
+        chartConfig={{
+          backgroundGradientFrom: '#f0f0f0',
+          backgroundGradientTo: '#ffffff',
+          color: (opacity = 1) => `rgba(76, 175, 80, ${opacity})`,
+          labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        }}
+        bezier
+        style={styles.graphStyle}
+      />
+      <TouchableOpacity style={styles.downloadButton} onPress={downloadReport}>
+        <Text style={styles.downloadButtonText}>Download Report</Text>
+      </TouchableOpacity>
+      <Text style={styles.sectionTitle}>Recent Activities</Text>
+    </View>
+  );
 
   return (
-    <ScrollView style={styles.container}>
-      {!token ?   <View >
-      <Text style={styles.expandedText}>Please login first</Text>
-      <TouchableOpacity onPress={handleLoginNavigation}>
-        <Text style={styles.loginLink}>Go to Login</Text>
-      </TouchableOpacity>
-    </View>:
-
-      <View style={styles.cardContainer}>
-        {/* Total Funds Raised */}
-        <Card style={styles.card}>
-          <TouchableOpacity onPress={() => toggleCard('fundsRaised')}>
-            <View style={styles.cardContent}>
-              <MaterialIcons name="attach-money" size={40} color="#4CAF50" />
-              <Text style={styles.cardTitle}>Total Funds Raised</Text>
-              <Text style={styles.cardValue}>$50,000</Text>
-            </View>
-          </TouchableOpacity>
-          {expandedCard === 'fundsRaised' && (
-            <View style={styles.expandedContentcharts}>
-              <LineChart
-                data={{
-                  labels: dummyData.fundsRaised.map((item) => item.month),
-                  datasets: [
-                    {
-                      data: dummyData.fundsRaised.map((item) => item.amount),
-                    },
-                  ],
-                }}
-                width={Dimensions.get('window').width - 40}
-                height={220}
-                chartConfig={{
-                  backgroundColor: '#4CAF50',
-                  backgroundGradientFrom: '#4CAF50',
-                  backgroundGradientTo: '#80E27E',
-                  decimalPlaces: 2,
-                  color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                  labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                  style: {
-                    borderRadius: 10,
-                  },
-                  propsForDots: {
-                    r: '6',
-                    strokeWidth: '2',
-                    stroke: '#4CAF50',
-                  },
-                }}
-                style={{
-                  marginVertical: 8,
-                  borderRadius: 10,
-                }}
-              />
-            </View>
-          )}
-        </Card>
-
-        {/* Total Projects */}
-        <Card style={styles.card}>
-          <TouchableOpacity onPress={() => toggleCard('projects')}>
-            <View style={styles.cardContent}>
-              <MaterialIcons name="business" size={40} color="#2196F3" />
-              <Text style={styles.cardTitle}>Total Projects</Text>
-              <Text style={styles.cardValue}>15</Text>
-            </View>
-          </TouchableOpacity>
-          {expandedCard === 'projects' && (
-            <View style={styles.expandedContent}>
-              {dummyData.projects.map((data, index) => {
-                const desiredAmount = 25000; // Set the desired amount for all projects
-                const receivedAmount = parseInt(
-                  data.amount.replace('$', '').replace(',', '')
-                ); // Remove $ and parse as number
-                const progressPercentage = (receivedAmount / desiredAmount) * 100;
-
-                return (
-                  <View key={index} style={styles.projectRow}>
-                    <Text style={styles.projectText}>{data.name}: {data.amount} of $25,000</Text>
-                    <View style={styles.progressBarContainer}>
-                      <View
-                        style={[
-                          styles.progressBar,
-                          { width: `${progressPercentage}%` },
-                        ]}
-                      />
-                    </View>
-                  </View>
-                );
-              })}
-            </View>
-          )}
-        </Card>
-        <Card style={styles.card}>
-        <TouchableOpacity onPress={() => toggleCard('investors')}>
-          <View style={styles.cardContent}>
-            <MaterialIcons name="people" size={40} color="#FF9800" />
-            <Text style={styles.cardTitle}>Total Investors</Text>
-            <Text style={styles.cardValue}>{dummyData.investors.length}</Text>
-          </View>
-        </TouchableOpacity>
-        {expandedCard === 'investors' && (
-          <View style={styles.expandedContent}>
-            {dummyData.investors.map((data, index) => (
-              <View key={index} style={styles.investorCard}>
-                <View style={styles.investorContent}>
-                  <MaterialIcons name="person" size={24} color="#FF9800" />
-                  <Text style={styles.investorName}>{data.name}</Text>
-                </View>
-                <Text style={styles.investorDetails}>
-                  Invested {data.amount} in {data.project}
-                </Text>
-              </View>
-            ))}
-          </View>
-        )}
-      </Card>
-      </View>
-      }
-    </ScrollView>
+    <FlatList
+      data={activities}
+      renderItem={({ item }) => (
+        <View style={styles.activityItem}>
+          <Text style={styles.activityTitle}>{item.title}</Text>
+          <Text style={styles.activityDate}>{item.date}</Text>
+        </View>
+      )}
+      keyExtractor={(item) => item.id}
+      contentContainerStyle={styles.container}
+      ListHeaderComponent={ListHeaderComponent}
+    />
   );
 };
 
 const styles = StyleSheet.create({
-  expandedText: {
-    fontSize: 18,
-    color: '#555',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  loginLink: {
-    fontSize: 18,
-    color: '#4e73df',
-    textDecorationLine: 'underline',
-    fontWeight: 'bold',
-  },
   container: {
-    flex: 1,
     padding: 20,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#F5F5F5',
   },
-  investorContent: {
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    backgroundColor: '#4CAF50',
+    padding: 20,
+    borderRadius: 15,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 5,
   },
-  investorName: {
-    fontSize: 20,
+  profilePicture: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 15,
+  },
+  userName: {
+    fontSize: 18,
     fontWeight: 'bold',
-    marginLeft: 10,
-    color: '#333',
+    color: 'white',
   },
-  investorDetails: {
-    fontSize: 16,
-    color: '#333',
-    marginLeft: 30,
+  userEmail: {
+    fontSize: 14,
+    color: 'white',
   },
-  investorCard: {
-    // backgroundColor: '#FFEB3B',  // Optional background color
-    borderRadius: 0,
-    marginBottom: 10,
-    padding: 15,
-    borderBottomWidth: 1, // Adds a bottom border
-    borderBottomColor: '#ddd', // Light gray color for the bottom border
-    borderBottomEndRadius: 10, // Rounded corner at the bottom right
-  },
-  cardContainer: {
-    flexDirection: 'column',
+  cardsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
+    marginBottom: 20,
   },
   card: {
-    width: '100%',
-    marginBottom: 20,
+    backgroundColor: 'white',
     borderRadius: 10,
+    padding: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 95,  // Set a fixed width for consistency
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
     elevation: 3,
+    marginHorizontal: 5,  // Space between cards
+  },
+  selectedCard: {
+    backgroundColor: '#A5D6A7',  // Color when card is selected
   },
   cardContent: {
-    flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginLeft: 10,
-    flex: 1,
   },
   cardValue: {
-    fontSize: 24,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+    marginVertical: 5,
+  },
+  cardTitle: {
+    fontSize: 14,
+    color: '#333',
+    textAlign: 'center',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    color: '#333',
+  },
+  graphStyle: {
+    borderRadius: 15,
+    marginBottom: 20,
+  },
+  downloadButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  downloadButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  activityItem: {
+    backgroundColor: 'white',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  activityTitle: {
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#333',
   },
-  expandedContent: {
-    padding: 15,
-    // backgroundColor: '#e0f7fa',
+  activityDate: {
+    fontSize: 12,
+    color: '#666',
   },
-  expandedContentcharts: {
-    padding: 0,
-    backgroundColor: '#e0f7fa',
-  },
-  expandedText: {
-    fontSize: 18,
-    marginVertical: 7,
-    color: '#333',
-  },
-  projectRow: {
-    marginBottom: 15,
-  },
-  projectText: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: '#333',
-  },
-  progressBarContainer: {
-    width: '100%',
-    height: 10,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 5,
-    overflow: 'hidden',
-  },
-  progressBar: {
-    height: '100%',
-    backgroundColor: '#2196F3',
-  },
-  
-  
 });
 
 export default Dashboard;
-
-
-// import React, { useState, useEffect } from 'react';
-// import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
-// import { Card } from 'react-native-paper';
-// import { MaterialIcons } from '@expo/vector-icons';
-// import { LineChart } from 'react-native-chart-kit';
-// import axios from 'axios';
-
-// const Dashboard = () => {
-//   const [expandedCard, setExpandedCard] = useState(null);
-//   const [data, setData] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const response = await axios.get('YOUR_BACKEND_API_URL');
-//         setData(response.data);
-//       } catch (err) {
-//         setError('Failed to fetch data');
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchData();
-//   }, []);
-
-//   const toggleCard = (cardName) => {
-//     setExpandedCard(expandedCard === cardName ? null : cardName);
-//   };
-
-//   if (loading) {
-//     return <ActivityIndicator size="large" color="#0000ff" />;
-//   }
-
-//   if (error) {
-//     return <Text style={styles.errorText}>{error}</Text>;
-//   }
-
-//   return (
-//     <ScrollView style={styles.container}>
-//       <View style={styles.cardContainer}>
-//         {/* Total Funds Raised */}
-//         <Card style={styles.card}>
-//           <TouchableOpacity onPress={() => toggleCard('fundsRaised')}>
-//             <View style={styles.cardContent}>
-//               <MaterialIcons name="attach-money" size={40} color="#4CAF50" />
-//               <Text style={styles.cardTitle}>Total Funds Raised</Text>
-//               <Text style={styles.cardValue}>${data.totalFundsRaised}</Text>
-//             </View>
-//           </TouchableOpacity>
-//           {expandedCard === 'fundsRaised' && (
-//             <View style={styles.expandedContentcharts}>
-//               <LineChart
-//                 data={{
-//                   labels: data.fundsRaised.map(item => item.month),
-//                   datasets: [{ data: data.fundsRaised.map(item => item.amount) }],
-//                 }}
-//                 width={Dimensions.get('window').width - 40}
-//                 height={220}
-//                 chartConfig={{
-//                   backgroundColor: '#4CAF50',
-//                   backgroundGradientFrom: '#4CAF50',
-//                   backgroundGradientTo: '#80E27E',
-//                   decimalPlaces: 2,
-//                   color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-//                   labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-//                   style: { borderRadius: 10 },
-//                   propsForDots: { r: '6', strokeWidth: '2', stroke: '#4CAF50' },
-//                 }}
-//                 style={{ marginVertical: 8, borderRadius: 10 }}
-//               />
-//             </View>
-//           )}
-//         </Card>
-
-//         {/* Total Projects */}
-//         <Card style={styles.card}>
-//           <TouchableOpacity onPress={() => toggleCard('projects')}>
-//             <View style={styles.cardContent}>
-//               <MaterialIcons name="business" size={40} color="#2196F3" />
-//               <Text style={styles.cardTitle}>Total Projects</Text>
-//               <Text style={styles.cardValue}>{data.totalProjects}</Text>
-//             </View>
-//           </TouchableOpacity>
-//           {expandedCard === 'projects' && (
-//             <View style={styles.expandedContent}>
-//               {data.projects.map((project, index) => (
-//                 <View key={index} style={styles.projectRow}>
-//                   <Text style={styles.projectText}>{project.name}: {project.amount} of $25,000</Text>
-//                   <View style={styles.progressBarContainer}>
-//                     <View style={[styles.progressBar, { width: `${(parseInt(project.amount.replace('$', '').replace(',', '')) / 25000) * 100}%` }]} />
-//                   </View>
-//                 </View>
-//               ))}
-//             </View>
-//           )}
-//         </Card>
-
-//         {/* Total Investors */}
-//         <Card style={styles.card}>
-//           <TouchableOpacity onPress={() => toggleCard('investors')}>
-//             <View style={styles.cardContent}>
-//               <MaterialIcons name="people" size={40} color="#FF9800" />
-//               <Text style={styles.cardTitle}>Total Investors</Text>
-//               <Text style={styles.cardValue}>{data.investors.length}</Text>
-//             </View>
-//           </TouchableOpacity>
-//           {expandedCard === 'investors' && (
-//             <View style={styles.expandedContent}>
-//               {data.investors.map((investor, index) => (
-//                 <View key={index} style={styles.investorCard}>
-//                   <View style={styles.investorContent}>
-//                     <MaterialIcons name="person" size={24} color="#FF9800" />
-//                     <Text style={styles.investorName}>{investor.name}</Text>
-//                   </View>
-//                   <Text style={styles.investorDetails}>
-//                     Invested {investor.amount} in {investor.project}
-//                   </Text>
-//                 </View>
-//               ))}
-//             </View>
-//           )}
-//         </Card>
-//       </View>
-//     </ScrollView>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     padding: 20,
-//     backgroundColor: '#f3f4f6',
-//   },
-//   errorText: {
-//     color: 'red',
-//     textAlign: 'center',
-//     marginTop: 20,
-//   },
-//   investorContent: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     marginBottom: 10,
-//   },
-//   investorName: {
-//     fontSize: 20,
-//     fontWeight: 'bold',
-//     marginLeft: 10,
-//     color: '#333',
-//   },
-//   investorDetails: {
-//     fontSize: 16,
-//     color: '#333',
-//     marginLeft: 30,
-//   },
-//   investorCard: {
-//     borderRadius: 10,
-//     marginBottom: 10,
-//     padding: 15,
-//     borderBottomWidth: 1,
-//     borderBottomColor: '#ddd',
-//   },
-//   cardContainer: {
-//     flexDirection: 'column',
-//     alignItems: 'center',
-//   },
-//   card: {
-//     width: '100%',
-//     marginBottom: 20,
-//     borderRadius: 10,
-//     elevation: 3,
-//     backgroundColor: '#fff',
-//   },
-//   cardContent: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     padding: 20,
-//   },
-//   cardTitle: {
-//     fontSize: 18,
-//     fontWeight: '600',
-//     marginLeft: 10,
-//     flex: 1,
-//   },
-//   cardValue: {
-//     fontSize: 24,
-//     fontWeight: 'bold',
-//     color: '#333',
-//   },
-//   expandedContent: {
-//     padding: 15,
-//   },
-//   expandedContentcharts: {
-//     padding: 0,
-//     backgroundColor: '#e0f7fa',
-//   },
-//   projectRow: {
-//     marginBottom: 15,
-//   },
-//   projectText: {
-//     fontSize: 16,
-//     marginBottom: 5,
-//     color: '#333',
-//   },
-//   progressBarContainer: {
-//     width: '100%',
-//     height: 10,
-//     backgroundColor: '#e0e0e0',
-//     borderRadius: 5,
-//     overflow: 'hidden',
-//   },
-//   progressBar: {
-//     height: '100%',
-//     backgroundColor: '#2196F3',
-//   },
-// });
-
-// export default Dashboard;
