@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -46,8 +46,40 @@ const Home = ({ navigation }) => {
     },
   ]);
 
+  // Default static route mapping
+  const [routes, setRoutes] = useState({
+    dashboard: 'Dashboard',
+    explore: 'Explore',
+    report: 'Report',
+    campaign:'Campaign',
+    community:'Community',
+    events:'Events',
+    notification:'Notification',
+    profile:'My Profile',
+
+  });
+
+  // Optional: Fetch routes dynamically from the backend
+  useEffect(() => {
+    // Replace with your actual backend API endpoint
+    fetch('https://your-backend.com/api/routes')
+      .then((response) => response.json())
+      .then((data) => {
+        setRoutes(data); // Assuming backend response is { dashboard: 'Dashboard', explore: 'Explore' }
+      })
+      .catch((error) => {
+        console.error('Error fetching routes:', error);
+      });
+  }, []);
+
   const handleSearch = (query) => {
     setSearchQuery(query);
+
+    // Check if the search query matches a route keyword
+    const route = routes[query.toLowerCase()];
+    if (route) {
+      navigation.navigate(route); // Navigate to the matched route
+    }
   };
 
   const filteredCampaigns = campaigns.filter((campaign) =>
@@ -60,7 +92,7 @@ const Home = ({ navigation }) => {
       <View style={styles.searchContainer}>
         <Ionicons name="search" size={20} color="#aaa" style={styles.searchIcon} />
         <TextInput
-          placeholder="Search campaigns by title"
+          placeholder="Search campaigns or pages"
           value={searchQuery}
           onChangeText={handleSearch}
           style={styles.searchBar}
@@ -82,25 +114,6 @@ const Home = ({ navigation }) => {
         >
           <Text style={styles.exploreButtonText}>Explore Now</Text>
         </TouchableOpacity>
-      </View>
-
-      {/* Header Section */}
-      <View style={styles.headerSection}>
-        <Image
-          source={{ uri: 'https://via.placeholder.com/1200x400?text=Ebiza' }}
-          style={styles.bannerImage}
-        />
-        <View style={styles.headerContent}>
-          <Text style={styles.headerText}>
-            Empowering Abilities, One Crowd At a Time
-          </Text>
-          <TouchableOpacity
-            style={styles.reportButton}
-            onPress={() => navigation.navigate('Report')}
-          >
-            <Text style={styles.reportButtonText}>Start Campaign</Text>
-          </TouchableOpacity>
-        </View>
       </View>
 
       {/* Trending Campaigns Section */}
@@ -130,22 +143,6 @@ const Home = ({ navigation }) => {
       {filteredCampaigns.length === 0 && (
         <Text style={styles.noResults}>No campaigns found</Text>
       )}
-
-      {/* Mission Section */}
-      <View style={styles.infoSection}>
-        <Text style={styles.sectionHeader}>Our Mission</Text>
-        <Text style={styles.missionText}>
-          Our mission is to connect people with causes that matter. Through our platform, we empower individuals to create and support campaigns that have the potential to change lives, bringing communities closer together.
-        </Text>
-      </View>
-
-      {/* Vision Section */}
-      <View style={styles.infoSection}>
-        <Text style={styles.sectionHeader}>Our Vision</Text>
-        <Text style={styles.visionText}>
-          We envision a world where everyone has the opportunity to contribute to a greater cause, creating lasting change and positive impact in communities across the globe.
-        </Text>
-      </View>
 
       {/* Footer Section */}
       <View style={styles.footer}>
@@ -231,38 +228,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  headerSection: {
-    marginBottom: 30,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 10,
-    overflow: 'hidden',
-    elevation: 3,
-  },
-  bannerImage: {
-    width: '100%',
-    height: 200,
-    resizeMode: 'cover',
-  },
-  headerContent: {
-    padding: 15,
-    alignItems: 'center',
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 10,
-    color: '#333',
-  },
   subHeader: {
     fontSize: 19,
     fontWeight: '600',
     color: '#222',
     marginBottom: 15,
     textAlign: 'left',
-  },
-  scrollView: {
-    paddingVertical: 10,
   },
   campaignCard: {
     width: 250,
@@ -305,42 +276,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#999',
     marginTop: 20,
-  },
-  reportButton: {
-    backgroundColor: '#6200ea',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    alignItems: 'center',
-    elevation: 3,
-  },
-  reportButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  infoSection: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-    marginBottom: 20,
-    elevation: 2,
-  },
-  sectionHeader: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#6200ea',
-    marginBottom: 10,
-  },
-  missionText: {
-    fontSize: 16,
-    color: '#555',
-    lineHeight: 24,
-  },
-  visionText: {
-    fontSize: 16,
-    color: '#555',
-    lineHeight: 24,
   },
   footer: {
     backgroundColor: '#6200ea',
