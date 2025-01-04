@@ -119,7 +119,7 @@ const DrawerNavigator = () => {
         headerRight: () => (
           <TouchableOpacity
             onPress={() => navigation.navigate('Notifications')}
-            style={{ marginRight: 15 }}
+            style={{ marginRight: 0 }}
           >
             <Ionicons name="notifications-outline" size={24} color="white" />
           </TouchableOpacity>
