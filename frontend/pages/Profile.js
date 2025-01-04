@@ -31,7 +31,7 @@ const ProfileScreen = ({ navigation }) => {
           const fetchedData = {
             name: user.fullname || "Akash Dhal",
             role: user.role || "NGO",
-            profilePicture: user.profilePicture || "https://via.placeholder.com/150",
+            profilePicture: "https://via.placeholder.com/150",
             profileInfo: { email: user.email || "akash@gmail.com", phone: user.phone || "+1 234 567 890" },
             posts: [
               { id: 1, title: "Post 1" },
