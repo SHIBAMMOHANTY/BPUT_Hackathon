@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,24 +7,79 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import LocationPicker from "../component/Entryinfo/LocationPicker";
 import MediaUploader from "../component/Entryinfo/MediaUploader";
 
 const ReportPage = () => {
-  const [selectedTab, setSelectedTab] = useState("Social Work");
+  const [selectedTab, setSelectedTab] = useState("NGO/Business");
 
   const [formData, setFormData] = useState({
     title: "",
-    details: "",
-    funding: "",
+    description: "",
+    requiredAmount: "",
     location: "",
     website: "",
     tags: "",
     salary: "",
+    role: "business",
+    userId: "",
+    media: "https://example.com/image.jpg",
+    mediaType: "image",
+    company: "",
   });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+        if (token) {
+          const parsedToken = JSON.parse(atob(token.split(".")[1]));
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            role: parsedToken.role,
+            userId: parsedToken.id,
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching token:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleInputChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
+  };
+
+  const handleMediaUpload = (url, type) => {
+    setFormData({ ...formData, media: url, mediaType: type });
+  };
+
+  const handleSubmit = async () => {
+    console.log(formData);
+    // try {
+    //   const token = await AsyncStorage.getItem("authToken");
+    //   const config = {
+    //     method: "post",
+    //     maxBodyLength: Infinity,
+    //     url: "http://192.168.218.149/api/post/posts",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //     data: JSON.stringify(formData),
+    //   };
+
+    //   const response = await axios.request(config);
+    //   console.log("Post created successfully:", response.data);
+    //   alert("Post created successfully!");
+    // } catch (error) {
+    //   console.error("Error creating post:", error);
+    //   alert("Failed to create post. Please try again.");
+    // }
   };
 
   const renderFormFields = () => {
@@ -39,20 +94,20 @@ const ReportPage = () => {
               onChangeText={(text) => handleInputChange("title", text)}
             />
             <InputField
-              label="Details"
-              placeholder="Enter Details"
-              value={formData.details}
+              label="Description"
+              placeholder="Enter Description"
+              value={formData.description}
               multiline
-              onChangeText={(text) => handleInputChange("details", text)}
+              onChangeText={(text) => handleInputChange("description", text)}
             />
             <InputField
-              label="Funding Needed"
+              label="Required Amount"
               placeholder="Enter Amount"
               keyboardType="numeric"
-              value={formData.funding}
-              onChangeText={(text) => handleInputChange("funding", text)}
+              value={formData.requiredAmount}
+              onChangeText={(text) => handleInputChange("requiredAmount", text)}
             />
-            <MediaUploader />
+            <MediaUploader onUpload={handleMediaUpload} />
             <LocationPicker
               onSelectLocation={(loc) => handleInputChange("location", loc)}
             />
@@ -74,13 +129,13 @@ const ReportPage = () => {
               onChangeText={(text) => handleInputChange("title", text)}
             />
             <InputField
-              label="Details"
-              placeholder="Enter Details"
-              value={formData.details}
+              label="Description"
+              placeholder="Enter Description"
+              value={formData.description}
               multiline
-              onChangeText={(text) => handleInputChange("details", text)}
+              onChangeText={(text) => handleInputChange("description", text)}
             />
-            <MediaUploader />
+            <MediaUploader onUpload={handleMediaUpload} />
             <LocationPicker
               onSelectLocation={(loc) => handleInputChange("location", loc)}
             />
@@ -104,9 +159,9 @@ const ReportPage = () => {
             <InputField
               label="Job Description"
               placeholder="Enter Job Description"
-              value={formData.details}
+              value={formData.description}
               multiline
-              onChangeText={(text) => handleInputChange("details", text)}
+              onChangeText={(text) => handleInputChange("description", text)}
             />
             <InputField
               label="Disability Type"
@@ -133,30 +188,10 @@ const ReportPage = () => {
 
   return (
     <View style={styles.container}>
-      {/* <View style={styles.tabs}>
-        {["NGO/Business", "Social Work", "Job"].map((tab) => (
-          <TouchableOpacity
-            key={tab}
-            onPress={() => setSelectedTab(tab)}
-            style={[styles.tabButton, selectedTab === tab && styles.activeTabButton]}
-          >
-            <Text
-              style={[styles.tabText, selectedTab === tab && styles.activeTabText]}
-            >
-              {tab}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View> */}
-
       <ScrollView contentContainerStyle={styles.form}>
         {renderFormFields()}
       </ScrollView>
-
-      <TouchableOpacity
-        style={styles.submitButton}
-        onPress={() => console.log(formData)}
-      >
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
     </View>
@@ -178,30 +213,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f4f9fc",
-  },
-  tabs: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    backgroundColor: "#2196F3",
-    padding: 10,
-    borderRadius: 20,
-    marginHorizontal: 10,
-    marginVertical: 10,
-  },
-  tabButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-  },
-  activeTabButton: {
-    backgroundColor: "#1976D2",
-  },
-  tabText: {
-    color: "#ffffff",
-    fontSize: 16,
-  },
-  activeTabText: {
-    fontWeight: "bold",
   },
   form: {
     padding: 16,
