@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,12 +6,31 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import LocationPicker from "../component/Entryinfo/LocationPicker";
 import MediaUploader from "../component/Entryinfo/MediaUploader";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const ReportPage = () => {
-  const [selectedTab, setSelectedTab] = useState("Social Work");
+  const [user, setUser] = useState(null);
+  const [selectedTab, setSelectedTab] = useState("user");
+  const [loader,setLoader]=useState(false)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userString = await AsyncStorage.getItem("user");
+        const user = userString ? JSON.parse(userString) : null;
+        setUser(user);
+        setSelectedTab(user?.role);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+    fetchUser();
+  }, []);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -21,15 +40,56 @@ const ReportPage = () => {
     website: "",
     tags: "",
     salary: "",
+    skills: "",
   });
 
   const handleInputChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
   };
 
+  const handleSubmit = async () => {
+    setLoader(true)
+    const token = await AsyncStorage.getItem("token"); 
+    const data = {
+        title: formData.title,
+        description: formData.details,
+        media: formData.media || "https://upload.wikimedia.org/wikipedia/commons/3/3f/JPEG_example_flower.jpg",
+        mediaType: "image",
+        requiredAmount: formData.funding || 0,
+        company: formData.tags || "N/A",  // Ensure a default value
+        location: typeof formData.location === 'object' 
+                  ? `${formData.location.latitude}, ${formData.location.longitude}`
+                  : formData.location,
+        salary: formData.salary || "N/A",
+        role: user?.role,
+        userId: user?.id || "N/A", // Provide a default if missing
+    };
+
+    try {
+        const response = await axios.post(
+            "https://ebizaapi-production.up.railway.app/api/post/posts",
+            data,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        console.log("Post created successfully", response.data);
+        alert("Post submitted successfully!");
+        setLoader(false)
+    } catch (error) {
+        console.error("Error submitting post:", error.response?.data || error);
+        alert("Failed to submit post.");
+        setLoader(false)
+    }
+};
+
   const renderFormFields = () => {
     switch (selectedTab) {
-      case "NGO/Business":
+      case "ngo":
+      case "business":
         return (
           <>
             <InputField
@@ -64,7 +124,7 @@ const ReportPage = () => {
             />
           </>
         );
-      case "Social Work":
+      case "user":
         return (
           <>
             <InputField
@@ -133,31 +193,80 @@ const ReportPage = () => {
 
   return (
     <View style={styles.container}>
-      {/* <View style={styles.tabs}>
-        {["NGO/Business", "Social Work", "Job"].map((tab) => (
+      {/* Tabs Section */}
+      <View
+        style={[
+          styles.tabs,
+          (user?.role === "user" || selectedTab === "user") && { display: "none" },
+        ]}
+      >
+        {["ngo", "business"].includes(user?.role) ? (
+          <>
+            <TouchableOpacity
+              onPress={() => setSelectedTab(user.role)}
+              style={[
+                styles.tabButton,
+                selectedTab === user.role && styles.activeTabButton,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.tabText,
+                  selectedTab === user.role && styles.activeTabText,
+                ]}
+              >
+                {user.role === "ngo" ? "NGO" : "Business"}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setSelectedTab("Job")}
+              style={[
+                styles.tabButton,
+                selectedTab === "Job" && styles.activeTabButton,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.tabText,
+                  selectedTab === "Job" && styles.activeTabText,
+                ]}
+              >
+                Job
+              </Text>
+            </TouchableOpacity>
+          </>
+        ) : (
           <TouchableOpacity
-            key={tab}
-            onPress={() => setSelectedTab(tab)}
-            style={[styles.tabButton, selectedTab === tab && styles.activeTabButton]}
+            onPress={() => setSelectedTab("user")}
+            style={[
+              styles.tabButton,
+              selectedTab === "user" && styles.activeTabButton,
+            ]}
           >
             <Text
-              style={[styles.tabText, selectedTab === tab && styles.activeTabText]}
+              style={[
+                styles.tabText,
+                selectedTab === "user" && styles.activeTabText,
+              ]}
             >
-              {tab}
+              User
             </Text>
           </TouchableOpacity>
-        ))}
-      </View> */}
+        )}
+      </View>
 
-      <ScrollView contentContainerStyle={styles.form}>
-        {renderFormFields()}
-      </ScrollView>
+      {/* Form Section */}
+      <ScrollView contentContainerStyle={styles.form}>{renderFormFields()}</ScrollView>
 
-      <TouchableOpacity
-        style={styles.submitButton}
-        onPress={() => console.log(formData)}
-      >
-        <Text style={styles.submitButtonText}>Submit</Text>
+      {/* Submit Button */}
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        
+        {loader ? (
+          <ActivityIndicator size="small" color="#ffffff" />
+        ) : (
+          <Text style={styles.submitButtonText}>Submit</Text>
+        )}
+       
       </TouchableOpacity>
     </View>
   );
@@ -173,7 +282,6 @@ const InputField = ({ label, placeholder, ...props }) => (
     />
   </View>
 );
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

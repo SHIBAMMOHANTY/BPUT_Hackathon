@@ -10,18 +10,12 @@ const SignupScreen = ({ navigation }) => {
   const [role, setRole] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [disabilityType, setDisabilityType] = useState(''); // Only the disability type state
+  const [disabilityType, setDisabilityType] = useState('none'); // Only the disability type state
   const [loading, setLoading] = useState(false); // State to manage the loader
 
   // List of disability types
   const disabilityTypes = [
-    'Visual Impairment',
-    'Hearing Impairment',
-    'Cognitive Impairment',
-    'Physical Impairment',
-    'Speech Impairment',
-    'Multiple Disabilities',
-    'Other'
+   'none', 'physical', 'hearing', 'visual', 'speech', 'cognitive', 'psychological','other'
   ];
 
   const handleSignup = async () => {
@@ -39,12 +33,12 @@ const SignupScreen = ({ navigation }) => {
       role: role,
       disabilityType: disabilityType
     });
-
+console.log(userData)
     // Axios request configuration
     const config = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'http://192.168.29.193:5000/api/users/create',
+      url: 'https://ebizaapi-production.up.railway.app/api/users/create',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -115,14 +109,14 @@ const SignupScreen = ({ navigation }) => {
           style={styles.picker}
         >
           <Picker.Item label="Select Role" value="" />
-          <Picker.Item label="INVESTER" value="INVESTER" />
-          <Picker.Item label="NGO" value="NGO" />
-          <Picker.Item label="BUSINESS OWNER" value="BUSINESS OWNER" />
+          <Picker.Item label="user" value="user" />
+          <Picker.Item label="NGO" value="ngo" />
+          <Picker.Item label="BUSINESS" value="business" />
         </Picker>
       </View>
 
       {/* Disability Type Dropdown for Business Owners */}
-      {role === 'BUSINESS OWNER' && (
+      {role === 'user' && (
         <View style={styles.input}>
           <Picker
             selectedValue={disabilityType}

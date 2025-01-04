@@ -12,8 +12,9 @@ import {
   Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -21,35 +22,75 @@ const ProfileScreen = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setTimeout(() => {
-        const fetchedData = {
-          name: "John Doe",
-          role: "Investor",
-          profilePicture: "https://via.placeholder.com/150",
-          profileInfo: { email: "john.doe@example.com", phone: "+1 234 567 890" },
-          posts: [
-            { id: 1, title: "Post 1" },
-            { id: 2, title: "Post 2" },
-            { id: 3, title: "Post 3" },
-            { id: 4, title: "Post 4" },
-          ],
-        };
-        setUserData(fetchedData);
-        setEditedData({ ...fetchedData.profileInfo, name: fetchedData.name });
+      try {
+        const userString = await AsyncStorage.getItem("user");
+        const user = userString ? JSON.parse(userString) : null;
+
+        if (user) {
+          const fetchedData = {
+            name: user.fullname || "Akash Dhal",
+            role: user.role || "NGO",
+            profilePicture: user.profilePicture || "https://via.placeholder.com/150",
+            profileInfo: { email: user.email || "akash@gmail.com", phone: user.phone || "+1 234 567 890" },
+            posts: [
+              { id: 1, title: "Post 1" },
+              { id: 2, title: "Post 2" },
+              { id: 3, title: "Post 3" },
+              { id: 4, title: "Post 4" },
+            ],
+          };
+          setUserData(fetchedData);
+          setEditedData({ ...fetchedData.profileInfo, name: fetchedData.name });
+        }
         setIsLoading(false);
-      }, 1500);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setIsLoading(false);
+      }
     };
+
     fetchData();
   }, []);
 
-  const handleEditSave = () => {
-    if (!editedData.name || !editedData.email || !editedData.phone) {
-      Alert.alert("Error", "Please fill all the fields.");
-    } else {
-      setUserData({ ...userData, name: editedData.name, profileInfo: { email: editedData.email, phone: editedData.phone } });
-      setIsModalVisible(false);
+  const handleEditSave = async () => {
+    if (!editedData.name || !editedData.email ) {
+        Alert.alert("Error", "Please fill all the fields.");
+        return;
     }
-  };
+
+    try {
+        const axios = require('axios');
+        const response = await axios.put(
+            `http://localhost:5000/api/users/updateuser/${userData.id}`,
+            {
+                fullname: editedData.name,
+                email: editedData.email,
+             
+            },
+            {
+                headers: { 'Content-Type': 'application/json' }
+            }
+        );
+
+        if (response.status === 200) {
+            setUserData((prev) => ({
+                ...prev,
+                name: editedData.name,
+                profileInfo: { 
+                    email: editedData.email, 
+                    phone: editedData.phone 
+                }
+            }));
+            setIsModalVisible(false);
+            Alert.alert("Success", "Profile updated successfully!");
+        }
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        Alert.alert("Error", "Failed to update profile. Please try again.");
+    }
+};
+
+
 
   const handleDeleteAccount = () => {
     Alert.alert(
@@ -60,7 +101,11 @@ const ProfileScreen = () => {
         {
           text: "Delete",
           style: "destructive",
-          onPress: () => console.log("Account deleted"),
+          onPress: () => {
+            navigation.navigate('Login');
+            AsyncStorage.removeItem('authToken');
+            AsyncStorage.removeItem('user');
+          },
         },
       ]
     );
@@ -117,8 +162,6 @@ const ProfileScreen = () => {
       <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount}>
         <Text style={styles.deleteButtonText}>Delete Account</Text>
       </TouchableOpacity>
-
-    
 
       <Modal
         visible={isModalVisible}
@@ -318,6 +361,5 @@ const styles = StyleSheet.create({
     fontSize: 16 
   },
 });
-
 
 export default ProfileScreen;
