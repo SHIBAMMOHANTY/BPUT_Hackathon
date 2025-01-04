@@ -16,11 +16,7 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-pp.use(cors({
-    origin: '*', // Accept requests from all origins
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific HTTP methods
-   
-}));
+app.use(cors());
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -40,5 +36,5 @@ app.get('/', (req, res) => {
 // Start the Server
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+    console.log(Server running on port ${port});
 });
