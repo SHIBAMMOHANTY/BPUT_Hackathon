@@ -34,8 +34,8 @@ const ReportPage = () => {
 
   const [formData, setFormData] = useState({
     title: "",
-    details: "",
-    funding: "",
+    description: "",
+    requiredAmount: "",
     location: "",
     website: "",
     tags: "",
@@ -52,10 +52,10 @@ const ReportPage = () => {
     const token = await AsyncStorage.getItem("token"); 
     const data = {
         title: formData.title,
-        description: formData.details,
+        description: formData.description,
         media: formData.media || "https://upload.wikimedia.org/wikipedia/commons/3/3f/JPEG_example_flower.jpg",
         mediaType: "image",
-        requiredAmount: formData.funding || 0,
+        requiredAmount: formData.requiredAmount || 0,
         company: formData.tags || "N/A",  // Ensure a default value
         location: typeof formData.location === 'object' 
                   ? `${formData.location.latitude}, ${formData.location.longitude}`
@@ -64,7 +64,7 @@ const ReportPage = () => {
         role: user?.role,
         userId: user?.id || "N/A", // Provide a default if missing
     };
-
+console.log(data)
     try {
         const response = await axios.post(
             "https://ebizaapi-production.up.railway.app/api/post/posts",
@@ -99,20 +99,20 @@ const ReportPage = () => {
               onChangeText={(text) => handleInputChange("title", text)}
             />
             <InputField
-              label="Details"
-              placeholder="Enter Details"
-              value={formData.details}
+              label="Description"
+              placeholder="Enter Description"
+              value={formData.description}
               multiline
-              onChangeText={(text) => handleInputChange("details", text)}
+              onChangeText={(text) => handleInputChange("description", text)}
             />
             <InputField
-              label="Funding Needed"
+              label="Required Amount"
               placeholder="Enter Amount"
               keyboardType="numeric"
-              value={formData.funding}
-              onChangeText={(text) => handleInputChange("funding", text)}
+              value={formData.requiredAmount}
+              onChangeText={(text) => handleInputChange("requiredAmount", text)}
             />
-            <MediaUploader />
+            <MediaUploader  />
             <LocationPicker
               onSelectLocation={(loc) => handleInputChange("location", loc)}
             />
@@ -134,13 +134,13 @@ const ReportPage = () => {
               onChangeText={(text) => handleInputChange("title", text)}
             />
             <InputField
-              label="Details"
-              placeholder="Enter Details"
-              value={formData.details}
+              label="Description"
+              placeholder="Enter Description"
+              value={formData.description}
               multiline
-              onChangeText={(text) => handleInputChange("details", text)}
+              onChangeText={(text) => handleInputChange("description", text)}
             />
-            <MediaUploader />
+            <MediaUploader  />
             <LocationPicker
               onSelectLocation={(loc) => handleInputChange("location", loc)}
             />
@@ -164,9 +164,9 @@ const ReportPage = () => {
             <InputField
               label="Job Description"
               placeholder="Enter Job Description"
-              value={formData.details}
+              value={formData.description}
               multiline
-              onChangeText={(text) => handleInputChange("details", text)}
+              onChangeText={(text) => handleInputChange("description", text)}
             />
             <InputField
               label="Disability Type"
@@ -287,30 +287,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f4f9fc",
   },
-  tabs: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    backgroundColor: "#2196F3",
-    padding: 10,
-    borderRadius: 20,
-    marginHorizontal: 10,
-    marginVertical: 10,
-  },
-  tabButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-  },
-  activeTabButton: {
-    backgroundColor: "#1976D2",
-  },
-  tabText: {
-    color: "#ffffff",
-    fontSize: 16,
-  },
-  activeTabText: {
-    fontWeight: "bold",
-  },
   form: {
     padding: 16,
   },
@@ -346,6 +322,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  tabs: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    backgroundColor: "#2196F3",
+    padding: 10,
+    borderRadius: 20,
+    marginHorizontal: 10,
+    marginVertical: 10,
+  },
+  tabButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  activeTabButton: {
+    backgroundColor: "#1976D2",
+  },
+  tabText: {
+    color: "#ffffff",
+    fontSize: 16,
+  },
+  activeTabText: {
+    fontWeight: "bold",
+  },
+
 });
 
 export default ReportPage;

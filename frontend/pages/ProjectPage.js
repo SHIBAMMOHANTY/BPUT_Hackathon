@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,12 +9,13 @@ import {
   Dimensions,
   Modal,
   TextInput,
+  Pressable,
 } from 'react-native';
 import { Video } from 'expo-av';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Donate from './Donate';
 import { useNavigation } from '@react-navigation/native';
-
+import axios from 'axios';
 
 const { height, width } = Dimensions.get('window');
 
@@ -52,7 +53,29 @@ const ProjectPage = ({ navigation }) => {
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [commentText, setCommentText] = useState('');
   const [commentModalVisible, setCommentModalVisible] = useState(false);
-   const navigate =useNavigation()
+  const navigate = useNavigation();
+
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      const config = {
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: 'http://192.168.218.149/api/post/posts',
+        headers: {},
+      };
+
+      try {
+        const response = await axios.request(config);
+        console.log('------>', response.data);
+
+        setCampaigns(response.data.length ? response.data : dummyCampaigns);
+      } catch (error) {
+        console.error('Error fetching campaigns:', error);
+        setCampaigns(dummyCampaigns); // Use dummy data in case of an error
+      }
+    };
+    fetchCampaigns();
+  }, []);
 
   // Function to handle like status and toggle play/pause
   const handleLikeAndTogglePlay = (id, eventType) => {
@@ -61,25 +84,56 @@ const ProjectPage = ({ navigation }) => {
         item.id === id
           ? {
               ...item,
-              isLiked: eventType === 'double' ? !item.isLiked : item.isLiked, // Toggle like on double click
-              isPlaying: eventType === 'single' ? !item.isPlaying : item.isPlaying, // Toggle play/pause on single click
-              likes: eventType === 'double' && !item.isLiked ? item.likes + 1 : item.isLiked && eventType === 'double' ? item.likes - 1 : item.likes,
+              isLiked:
+                eventType === 'double' ? !item.isLiked : item.isLiked, // Toggle like on double click
+              isPlaying:
+                eventType === 'single' ? !item.isPlaying : item.isPlaying, // Toggle play/pause on single click
+              likes:
+                eventType === 'double' && !item.isLiked
+                  ? item.likes + 1
+                  : item.isLiked && eventType === 'double'
+                  ? item.likes - 1
+                  : item.likes,
             }
           : item
       )
     );
   };
 
-  const handleComment = () => {
-    setCampaigns((prev) =>
-      prev.map((item) =>
-        item.id === selectedCampaign
-          ? { ...item, comments: [...item.comments, commentText] }
-          : item
-      )
-    );
-    setCommentText('');
-    setCommentModalVisible(false);
+  const handleComment = async () => {
+    try {
+      const data = JSON.stringify({
+        postId: selectedCampaign,
+        userId: 'dummyUserId', // Replace with actual userId if needed
+        content: commentText,
+      });
+
+      const config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'http://192.168.218.149/api/post/messages',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: data,
+      };
+
+      const response = await axios.request(config);
+      console.log('Comment posted:', response.data);
+
+      // If the comment is posted successfully, update the local state
+      setCampaigns((prev) =>
+        prev.map((item) =>
+          item.id === selectedCampaign
+            ? { ...item, comments: [...item.comments, commentText] }
+            : item
+        )
+      );
+      setCommentText('');
+      setCommentModalVisible(false);
+    } catch (error) {
+      console.error('Error posting comment:', error);
+    }
   };
 
   const renderCampaign = ({ item }) => (
@@ -94,7 +148,7 @@ const ProjectPage = ({ navigation }) => {
 
       <View style={styles.mediaContainer}>
         {item.mediaType === 'video' ? (
-          <TouchableOpacity
+          <Pressable
             onPress={() => handleLikeAndTogglePlay(item.id, 'single')}
             onDoublePress={() => handleLikeAndTogglePlay(item.id, 'double')}
             style={{ position: 'relative' }}
@@ -115,7 +169,7 @@ const ProjectPage = ({ navigation }) => {
                 <Icon name="play" size={50} color="white" />
               </TouchableOpacity>
             )}
-          </TouchableOpacity>
+          </Pressable>
         ) : (
           <Image source={{ uri: item.mediaUrl }} style={styles.media} />
         )}
@@ -140,7 +194,7 @@ const ProjectPage = ({ navigation }) => {
           <Icon name="share" size={36} color="white" />
           <Text style={styles.actionCount}>{item.shares}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}  onPress={()=>navigate.navigate('Donate')}>
+        <TouchableOpacity style={styles.actionButton} onPress={() => navigate.navigate('Donate')}>
           <Icon name="money" size={36} color="white" />
         </TouchableOpacity>
       </View>
@@ -156,55 +210,53 @@ const ProjectPage = ({ navigation }) => {
         style={styles.list}
         showsVerticalScrollIndicator={false}
       />
- <Modal visible={commentModalVisible} animationType="slide" transparent>
-  <View style={styles.modalContainer}>
-    <TouchableOpacity
-      style={styles.backButton}
-      onPress={() => setCommentModalVisible(false)} // Close the modal when clicked
-    >
-      <Icon name="arrow-left" size={30} color="white" />
-    </TouchableOpacity>
-    
-    {/* Comment Input and Post Button */}
-    <View style={styles.commentInputContainer}>
-      <TextInput
-        style={styles.commentInput}
-        placeholder="Write a comment..."
-        placeholderTextColor="#ccc"
-        value={commentText}
-        onChangeText={setCommentText}
-      />
-      <TouchableOpacity onPress={handleComment} style={styles.commentButton}>
-        <Text style={styles.commentButtonText}>Post</Text>
-      </TouchableOpacity>
-    </View>
+      <Modal visible={commentModalVisible} animationType="slide" transparent>
+        <View style={styles.modalContainer}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => setCommentModalVisible(false)} // Close the modal when clicked
+          >
+            <Icon name="arrow-left" size={30} color="white" />
+          </TouchableOpacity>
 
-    {/* Comments Section */}
-    <View style={styles.commentSection}>
-      <FlatList
-        data={campaigns.find(item => item.id === selectedCampaign)?.comments || []}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.commentItem}>
-            <Image
-              source={{ uri: campaigns.find(campaign => campaign.id === selectedCampaign)?.profilePicture }}
-              style={styles.commentProfileImage}
+          {/* Comment Input and Post Button */}
+          <View style={styles.commentInputContainer}>
+            <TextInput
+              style={styles.commentInput}
+              placeholder="Write a comment..."
+              placeholderTextColor="#ccc"
+              value={commentText}
+              onChangeText={setCommentText}
             />
-            <View style={styles.commentTextContainer}>
-              <Text style={styles.commentUsername}>
-                {campaigns.find(campaign => campaign.id === selectedCampaign)?.name}
-              </Text>
-              <Text style={styles.commentText}>{item}</Text>
-            </View>
+            <TouchableOpacity onPress={handleComment} style={styles.commentButton}>
+              <Text style={styles.commentButtonText}>Post</Text>
+            </TouchableOpacity>
           </View>
-        )}
-        showsVerticalScrollIndicator={false}
-      />
-    </View>
-  </View>
-</Modal>
 
-
+          {/* Comments Section */}
+          <View style={styles.commentSection}>
+            <FlatList
+              data={campaigns.find((item) => item.id === selectedCampaign)?.comments || []}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <View style={styles.commentItem}>
+                  <Image
+                    source={{ uri: campaigns.find((campaign) => campaign.id === selectedCampaign)?.profilePicture }}
+                    style={styles.commentProfileImage}
+                  />
+                  <View style={styles.commentTextContainer}>
+                    <Text style={styles.commentUsername}>
+                      {campaigns.find((campaign) => campaign.id === selectedCampaign)?.name}
+                    </Text>
+                    <Text style={styles.commentText}>{item}</Text>
+                  </View>
+                </View>
+              )}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -276,13 +328,13 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
   },
-  
+
   modalContainer: {
     flex: 1,
-    justifyContent: 'flex-start', // This ensures the modal opens from the top
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)', // Darkened background to focus on modal
-    paddingTop: 50, // Add some padding to the top for the input and button
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    paddingTop: 50,
   },
   backButton: {
     position: 'absolute',
@@ -323,7 +375,7 @@ const styles = StyleSheet.create({
   },
   commentSection: {
     width: '95%',
-    maxHeight: height * 0.5, // Modal takes up 50% of the screen height
+    maxHeight: height * 0.5,
     marginBottom: 20,
     paddingTop: 10,
     paddingHorizontal: 10,

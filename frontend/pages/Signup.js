@@ -34,6 +34,7 @@ const SignupScreen = ({ navigation }) => {
       disabilityType: disabilityType
     });
 console.log(userData)
+console.log(userData)
     // Axios request configuration
     const config = {
       method: 'post',
