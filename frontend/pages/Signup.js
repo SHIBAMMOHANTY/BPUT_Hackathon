@@ -39,12 +39,12 @@ const SignupScreen = ({ navigation }) => {
       role: role,
       disabilityType: disabilityType
     });
-
+console.log(userData)
     // Axios request configuration
     const config = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'http://192.168.29.193:5000/api/users/create',
+      url: 'http://192.168.218.149/api/users/create',
       headers: {
         'Content-Type': 'application/json',
       },

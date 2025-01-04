@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -60,7 +60,7 @@ const ProfileScreen = () => {
         {
           text: "Delete",
           style: "destructive",
-          onPress: () => console.log("Account deleted"),
+          onPress: () => navigation.navigate('Login'),
         },
       ]
     );
