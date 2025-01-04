@@ -26,7 +26,7 @@ const Login = ({ navigation }) => {
     console.log(data);
     try {
       const response = await axios.post(
-        "http://192.168.29.193:5000/api/users/login",
+        "https://ebizaapi-production.up.railway.app/api/users/login",
         data,
         {
           headers: {
@@ -34,10 +34,13 @@ const Login = ({ navigation }) => {
           },
         }
       );
-
-      const token = response.data.token; // assuming token is returned in response.data.token
-      await AsyncStorage.setItem("authToken", token); // Save token in AsyncStorage
-      console.log(token);
+      
+      const token = response.data.token;
+      const user = response.data.user; // assuming token is returned in response.data.token
+   
+      await AsyncStorage.setItem("authToken", token);
+      await AsyncStorage.setItem("user", JSON.stringify(user)); // Save token in AsyncStorage
+      
       setLoading(false);
       // Redirect to home page
       navigation.navigate("Drawer");
