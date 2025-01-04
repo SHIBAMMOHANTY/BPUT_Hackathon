@@ -136,31 +136,7 @@ const Home = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Mission and Vision */}
-      <View style={styles.missionVisionContainer}>
-        <TouchableOpacity
-          style={styles.missionCard}
-          onPress={() => speakText('Our mission is to create a more inclusive world.')}
-        >
-          <Text style={styles.missionTitle}>Our Mission</Text>
-          <Text style={styles.missionText}>
-            Creating a more inclusive world by solving accessibility issues through social impact
-            crowdfunding.
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.visionCard}
-          onPress={() =>
-            speakText('Our vision is to empower disabled individuals with necessary resources.')
-          }
-        >
-          <Text style={styles.visionTitle}>Our Vision</Text>
-          <Text style={styles.visionText}>
-            Empowering disabled individuals by providing resources to make public spaces accessible
-            for all.
-          </Text>
-        </TouchableOpacity>
-      </View>
+     
 
       {/* Trending Campaigns */}
       <Text style={styles.sectionHeader} onPress={() => speakText('Trending Campaigns')}>
@@ -192,6 +168,32 @@ const Home = ({ navigation }) => {
         </Text>
       )}
 
+       {/* Mission and Vision */}
+       <View style={styles.missionVisionContainer}>
+        <TouchableOpacity
+          style={styles.missionCard}
+          onPress={() => speakText('Our mission is to create a more inclusive world.')}
+        >
+          <Text style={styles.missionTitle}>Our Mission</Text>
+          <Text style={styles.missionText}>
+            Creating a more inclusive world by solving accessibility issues through social impact
+            crowdfunding.
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.visionCard}
+          onPress={() =>
+            speakText('Our vision is to empower disabled individuals with necessary resources.')
+          }
+        >
+          <Text style={styles.visionTitle}>Our Vision</Text>
+          <Text style={styles.visionText}>
+            Empowering disabled individuals by providing resources to make public spaces accessible
+            for all.
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       {/* Footer */}
       <View style={styles.footer}>
         <Text style={styles.footerText} onPress={() => speakText('Contact Us: info@ebizasocial.com')}>
@@ -220,6 +222,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
+    paddingHorizontal:5,
   },
   searchContainer: {
     flexDirection: 'row',
@@ -277,6 +280,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginTop: 20,
+    marginBottom: 20,
     paddingHorizontal: 10,
   },
   missionCard: {
@@ -337,10 +341,14 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
     overflow: 'hidden',
+    alignItems: 'center', // To center the content inside the card
+    justifyContent: 'space-between', // To ensure proper spacing between elements inside the card
+    paddingBottom: 15, // Adding padding to the bottom to give space for the button
   },
+  
   campaignImage: {
     width: '100%',
-    height: 120,
+    height: 150,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
@@ -358,8 +366,10 @@ const styles = StyleSheet.create({
   },
   donateButton: {
     backgroundColor: '#0d6efd',
-    padding: 10,
+    paddingVertical: 10,
+    width: '80%', // Button takes 80% width of the card for a centered appearance
     alignItems: 'center',
+    borderRadius: 5, // Ensuring the button has rounded corners
   },
   donateButtonText: {
     color: '#fff',
