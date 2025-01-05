@@ -62,8 +62,8 @@ console.log("------>",User)
         style={styles.profilePicture}
       />
       <View>
-        <Text style={styles.userName}>{User.fullname || "Akash Dhal"}</Text>
-        <Text style={styles.userEmail}>{User.email || 'Akash@gmail.com'}</Text>
+        <Text style={styles.userName}>{User?.fullname || "Akash Dhal"}</Text>
+        <Text style={styles.userEmail}>{User?.email || 'Akash@gmail.com'}</Text>
       </View>
     </View>
   );
