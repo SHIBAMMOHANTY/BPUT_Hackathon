@@ -31,7 +31,7 @@ const ProfileScreen = ({ navigation }) => {
           const fetchedData = {
             name: user.fullname || "Akash Dhal",
             role: user.role || "NGO",
-            profilePicture: "https://via.placeholder.com/150",
+            profilePicture: "https://media.licdn.com/dms/image/v2/D5603AQFT-xY2Y6FLrQ/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1730923192791?e=2147483647&v=beta&t=YmuQMBOae_bm2SKhS_LaXQIgCMMps-knZOLl6QoPRcQ",
             profileInfo: { email: user.email || "akash@gmail.com", phone: user.phone || "+1 234 567 890" },
             posts: [
               { id: 1, title: "Post 1" },
@@ -95,8 +95,8 @@ const ProfileScreen = ({ navigation }) => {
 
   const handleDeleteAccount = () => {
     Alert.alert(
-      "Delete Account",
-      "Are you sure you want to delete your account?",
+      "Logout Account",
+      "Are you sure you want to Logout your account?",
       [
         { text: "Cancel", style: "cancel" },
         {
@@ -161,7 +161,7 @@ const ProfileScreen = ({ navigation }) => {
       </View>
 
       <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount}>
-        <Text style={styles.deleteButtonText}>Delete Account</Text>
+        <Text style={styles.deleteButtonText}>Logout Your Account</Text>
       </TouchableOpacity>
 
       <Modal
