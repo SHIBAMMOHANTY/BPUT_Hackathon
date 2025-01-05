@@ -122,6 +122,12 @@ console.log(data)
               value={formData.website}
               onChangeText={(text) => handleInputChange("website", text)}
             />
+             <InputField
+              label="Add Tags"
+              placeholder="Enter Tags"
+              value={formData.tags}
+              onChangeText={(text) => handleInputChange("tags", text)}
+            />
           </>
         );
       case "user":
@@ -145,8 +151,8 @@ console.log(data)
               onSelectLocation={(loc) => handleInputChange("location", loc)}
             />
             <InputField
-              label="Tag NGO"
-              placeholder="Enter NGO Name"
+              label="Add Tags"
+              placeholder="Enter Tags"
               value={formData.tags}
               onChangeText={(text) => handleInputChange("tags", text)}
             />
