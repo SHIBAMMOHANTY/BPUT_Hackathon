@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Dimensions, Alert } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { LineChart } from 'react-native-chart-kit';
 import * as FileSystem from 'expo-file-system';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Dashboard = ({ navigation }) => {
   const screenWidth = Dimensions.get('window').width;
+  const [User,setUser]=useState(null)
+
+  const fetchuser=async()=>{
+    const userString = await AsyncStorage.getItem("user");
+    const user = userString ? JSON.parse(userString) : null;
+    setUser(user)
+  }
+  
+      useEffect(()=>{
+        fetchuser()
+      },[])
 
   const cards = [
     { id: '1', title: 'Donations Made', value: 15, icon: 'heart', graphData: [10, 15, 20, 25, 30, 35] },
@@ -42,7 +54,7 @@ const Dashboard = ({ navigation }) => {
       console.error('Download failed:', error);
     }
   };
-
+console.log("------>",User)
   const Header = () => (
     <View style={styles.header}>
       <Image
@@ -50,8 +62,8 @@ const Dashboard = ({ navigation }) => {
         style={styles.profilePicture}
       />
       <View>
-        <Text style={styles.userName}>John Doe</Text>
-        <Text style={styles.userEmail}>john.doe@example.com</Text>
+        <Text style={styles.userName}>{User.fullname || "Akash Dhal"}</Text>
+        <Text style={styles.userEmail}>{User.email || 'Akash@gmail.com'}</Text>
       </View>
     </View>
   );
