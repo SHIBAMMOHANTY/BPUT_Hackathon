@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
-    paddingHorizontal:5,
+    paddingHorizontal: 10, // Increased padding for better spacing
   },
   ttsToggleContainer: {
     flexDirection: 'row',
@@ -367,28 +367,36 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
     overflow: 'hidden',
+    justifyContent: 'space-between', // Align elements evenly
+    alignItems: 'center', // Centering the content
+    padding: 15, // Add padding for inner content spacing
+    marginBottom: 10, // Add margin to separate cards
   },
   campaignImage: {
     width: '100%',
     height: 120,
     resizeMode: 'cover',
+    borderRadius: 10, // Optional: to make image corners rounded
   },
   campaignTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     marginVertical: 10,
     color: '#212529',
+    textAlign: 'center', // Center title text
   },
   campaignLocation: {
     fontSize: 12,
     color: '#495057',
+    textAlign: 'center', // Center location text
   },
   donateButton: {
     backgroundColor: '#0d6efd',
     paddingVertical: 8,
-    paddingHorizontal: 15,
+    paddingHorizontal: 50,
     borderRadius: 5,
     marginTop: 10,
+    alignSelf: 'center', // Ensure button is centered within card
   },
   donateButtonText: {
     color: '#fff',
