@@ -7,6 +7,7 @@ import {
   Image,
   ScrollView,
   Linking,
+  Switch,
 } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,6 +15,7 @@ import * as Speech from 'expo-speech';
 
 const Home = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [ttsEnabled, setTtsEnabled] = useState(true); // Default is true (enabled)
   const [campaigns] = useState([
     {
       id: '1',
@@ -80,11 +82,13 @@ const Home = ({ navigation }) => {
   );
 
   const speakText = (text) => {
-    Speech.speak(text, {
-      language: 'en',
-      pitch: 1.1,
-      rate: 0.9,
-    });
+    if (ttsEnabled) {
+      Speech.speak(text, {
+        language: 'en',
+        pitch: 1.1,
+        rate: 0.9,
+      });
+    }
   };
 
   const handleDonatePress = (campaignId) => {
@@ -99,6 +103,18 @@ const Home = ({ navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
+      {/* TTS Toggle */}
+      <View style={styles.ttsToggleContainer}>
+        
+        <Text style={styles.ttsToggleText} onPress={() => speakText('Enable or disable Screen Reader')} >
+          Screen Reader
+        </Text>
+        <Switch
+          value={ttsEnabled}
+          onValueChange={(value) => setTtsEnabled(value)}
+        />
+      </View>
+
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <Ionicons name="search" size={20} color="#aaa" style={styles.searchIcon} />
@@ -136,8 +152,6 @@ const Home = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-     
-
       {/* Trending Campaigns */}
       <Text style={styles.sectionHeader} onPress={() => speakText('Trending Campaigns')}>
         Trending Campaigns
@@ -168,8 +182,8 @@ const Home = ({ navigation }) => {
         </Text>
       )}
 
-       {/* Mission and Vision */}
-       <View style={styles.missionVisionContainer}>
+      {/* Mission and Vision */}
+      <View style={styles.missionVisionContainer}>
         <TouchableOpacity
           style={styles.missionCard}
           onPress={() => speakText('Our mission is to create a more inclusive world.')}
@@ -223,6 +237,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f9fa',
     paddingHorizontal:5,
+  },
+  ttsToggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  ttsToggleText: {
+    fontSize: 16,
+    color: '#495057',
+    marginRight: 10,
   },
   searchContainer: {
     flexDirection: 'row',
@@ -313,7 +340,7 @@ const styles = StyleSheet.create({
   visionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ff7f0f',
+    color: '#fd7e14',
     marginBottom: 10,
   },
   visionText: {
@@ -324,52 +351,44 @@ const styles = StyleSheet.create({
   sectionHeader: {
     fontSize: 20,
     fontWeight: 'bold',
+    margin: 10,
     color: '#212529',
-    marginVertical: 20,
-    paddingHorizontal: 10,
   },
   scrollView: {
-    marginVertical: 10,
+    paddingHorizontal: 10,
   },
   campaignCard: {
+    marginRight: 15,
     width: 200,
-    marginHorizontal: 10,
-    borderRadius: 10,
     backgroundColor: '#fff',
+    borderRadius: 10,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
     overflow: 'hidden',
-    alignItems: 'center', // To center the content inside the card
-    justifyContent: 'space-between', // To ensure proper spacing between elements inside the card
-    paddingBottom: 15, // Adding padding to the bottom to give space for the button
   },
-  
   campaignImage: {
     width: '100%',
-    height: 150,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    height: 120,
+    resizeMode: 'cover',
   },
   campaignTitle: {
     fontSize: 16,
     fontWeight: 'bold',
+    marginVertical: 10,
     color: '#212529',
-    padding: 10,
   },
   campaignLocation: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#495057',
-    paddingHorizontal: 10,
-    paddingBottom: 10,
   },
   donateButton: {
     backgroundColor: '#0d6efd',
-    paddingVertical: 10,
-    width: '80%', // Button takes 80% width of the card for a centered appearance
-    alignItems: 'center',
-    borderRadius: 5, // Ensuring the button has rounded corners
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    marginTop: 10,
   },
   donateButtonText: {
     color: '#fff',
@@ -377,13 +396,13 @@ const styles = StyleSheet.create({
   },
   noResults: {
     fontSize: 16,
-    color: '#6c757d',
+    color: '#495057',
     textAlign: 'center',
-    marginVertical: 20,
   },
   footer: {
     backgroundColor: '#212529',
-    padding: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
     alignItems: 'center',
   },
   footerText: {
@@ -394,12 +413,11 @@ const styles = StyleSheet.create({
   socialIcons: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginVertical: 10,
+    marginBottom: 10,
   },
   icon: {
     marginHorizontal: 10,
   },
 });
-
 
 export default Home;
