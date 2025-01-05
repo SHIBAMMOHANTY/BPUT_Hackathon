@@ -100,7 +100,7 @@ const ProfileScreen = ({ navigation }) => {
       [
         { text: "Cancel", style: "cancel" },
         {
-          text: "Delete",
+          text: "Logout",
           style: "destructive",
           onPress: () => {
             navigation.navigate('Login');
