@@ -56,8 +56,9 @@ const Home = ({ navigation }) => {
     campaign: 'Campaign',
     community: 'Community',
     events: 'Events',
-    notification: 'Notification',
+    notification: 'Notifications',
     profile: 'My Profile',
+    wallet:'Wallet',
   });
 
   useEffect(() => {
