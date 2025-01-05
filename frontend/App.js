@@ -18,7 +18,7 @@ import Notification from './pages/Notification';
 import WelcomeScreen from './pages/Welcome';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
-// import LanguageSupport from './pages/LanguageSupport';
+import Wallet from './pages/LanguageSupport';
 // import Verify from './pages/VerifyDashBoard';
 // import ProposalForm from './pages/Proposal';
 // import PartnershipPortal from './pages/PartnershipPortal';
@@ -127,13 +127,22 @@ const DrawerNavigator = () => {
       }}
     >
       <Drawer.Screen name="Home" component={MainTabNavigator} />
-      {/* <Drawer.Screen name="Language Support">
+     
+    
+      <Drawer.Screen name="My Profile">
+        {() => (
+          <Stack.Navigator>
+            <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
+          </Stack.Navigator>
+        )}
+      </Drawer.Screen>
+      <Drawer.Screen name="Wallet">
         {() => (
           <View style={styles.screen}>
-            <LanguageSupport />
+            <Wallet />
           </View>
         )}
-      </Drawer.Screen> */}
+      </Drawer.Screen>
       <Drawer.Screen
         name="Help & Support"
         component={() => {
@@ -145,14 +154,6 @@ const DrawerNavigator = () => {
           );
         }}
       />
-      <Drawer.Screen name="My Profile">
-        {() => (
-          <Stack.Navigator>
-            <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
-          </Stack.Navigator>
-        )}
-      </Drawer.Screen>
-      
       <Drawer.Screen name="Notifications">
         {() => (
           <View style={styles.screen}>
