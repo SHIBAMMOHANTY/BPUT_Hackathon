@@ -1,116 +1,173 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
-import { useTranslation } from 'react-i18next';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, TextInput, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const LanguageSupport = () => {
-  const { t, i18n } = useTranslation();
+const Wallet = () => {
+    const [balance, setBalance] = useState(5000);
+    const [withdrawAmount, setWithdrawAmount] = useState('');
+    const [transactions, setTransactions] = useState([]);
 
-  // Function to change language
-  const changeLanguage = (languageCode) => {
-    i18n.changeLanguage(languageCode);
-  };
+    const handleWithdraw = (method) => {
+        const amount = parseFloat(withdrawAmount);
+        if (!amount || amount > balance) {
+            Alert.alert('Invalid Amount', 'Please enter a valid amount within your balance.');
+            return;
+        }
+        Alert.alert(
+            'Withdraw Money',
+            `Are you sure you want to withdraw ₹${amount} to your ${method}?`,
+            [
+                { text: 'Cancel', style: 'cancel' },
+                { 
+                    text: 'Confirm', 
+                    onPress: () => {
+                        setBalance(balance - amount); 
+                        setTransactions([...transactions, { method, amount, date: new Date().toLocaleString() }]);
+                        setWithdrawAmount('');
+                        Alert.alert('Success', `₹${amount} has been withdrawn to your ${method}.`);
+                    }
+                }
+            ]
+        );
+    };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.title}>{t('languageSupport')}</Text>
-        <Text style={styles.subtitle}>{t('selectLanguage')}</Text>
+    return (
+        <View style={styles.container}>
+            <Text style={styles.title}>My Wallet</Text>
+            
+            {/* Balance Section */}
+            <View style={styles.balanceContainer}>
+                <Ionicons name="wallet" size={42} color="white" />
+                <Text style={styles.balanceText}>₹{balance.toFixed(2)}</Text>
+            </View>
 
-        <View style={styles.languageButtonsContainer}>
-          <TouchableOpacity
-            style={styles.languageButton}
-            onPress={() => changeLanguage('en')}
-          >
-            <Ionicons name="language" size={24} color="#fff" />
-            <Text style={styles.languageButtonText}>{t('english')}</Text>
-          </TouchableOpacity>
+            {/* Withdraw Input Section */}
+            <TextInput
+                style={styles.input}
+                placeholder="Enter amount to withdraw"
+                keyboardType="numeric"
+                value={withdrawAmount}
+                onChangeText={setWithdrawAmount}
+            />
 
-          <TouchableOpacity
-            style={styles.languageButton}
-            onPress={() => changeLanguage('es')}
-          >
-            <Ionicons name="language" size={24} color="#fff" />
-            <Text style={styles.languageButtonText}>{t('spanish')}</Text>
-          </TouchableOpacity>
+            {/* Withdraw Buttons Section */}
+            <View style={styles.withdrawContainer}>
+                <TouchableOpacity 
+                    style={styles.withdrawButton}
+                    onPress={() => handleWithdraw('Bank Account')}
+                >
+                    <Text style={styles.buttonText}>Withdraw to Bank</Text>
+                </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.languageButton}
-            onPress={() => changeLanguage('fr')}
-          >
-            <Ionicons name="language" size={24} color="#fff" />
-            <Text style={styles.languageButtonText}>{t('french')}</Text>
-          </TouchableOpacity>
+                <TouchableOpacity 
+                    style={[styles.withdrawButton, styles.upiButton]}
+                    onPress={() => handleWithdraw('UPI')}
+                >
+                    <Text style={styles.buttonText}>Withdraw to UPI</Text>
+                </TouchableOpacity>
+            </View>
 
-          <TouchableOpacity
-            style={styles.languageButton}
-            onPress={() => changeLanguage('de')}
-          >
-            <Ionicons name="language" size={24} color="#fff" />
-            <Text style={styles.languageButtonText}>{t('german')}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.languageButton}
-            onPress={() => changeLanguage('hi')}
-          >
-            <Ionicons name="language" size={24} color="#fff" />
-            <Text style={styles.languageButtonText}>{t('hindi')}</Text>
-          </TouchableOpacity>
+            {/* Transaction History Section */}
+            <Text style={styles.transactionTitle}>Transaction History</Text>
+            <FlatList
+                data={transactions}
+                renderItem={({ item }) => (
+                    <View style={styles.transactionCard}>
+                        <Text style={styles.transactionText}>Method: {item.method}</Text>
+                        <Text style={styles.transactionText}>Amount: ₹{item.amount}</Text>
+                        <Text style={styles.transactionText}>Date: {item.date}</Text>
+                    </View>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+            />
         </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F4F6F9',
-  },
-  contentContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333',
-    marginVertical: 20,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#777',
-    textAlign: 'center',
-    marginBottom: 30,
-  },
-  languageButtonsContainer: {
-    width: '100%',
-    paddingHorizontal: 20,
-  },
-  languageButton: {
-    backgroundColor: '#4e73df',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    marginBottom: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 5, // For shadow on Android
-    shadowColor: '#000', // For shadow on iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-  },
-  languageButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-    marginLeft: 10,
-  },
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f0f4f8',
+        padding: 20,
+    },
+    title: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 20,
+    },
+    balanceContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#4CAF50',
+        padding: 20,
+        borderRadius: 20,
+        marginBottom: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 5,
+        width: '100%',
+    },
+    balanceText: {
+        fontSize: 42,
+        fontWeight: 'bold',
+        color: 'white',
+        marginLeft: 10,
+    },
+    input: {
+        borderColor: '#ddd',
+        borderWidth: 1,
+        borderRadius: 10,
+        padding: 10,
+        marginVertical: 20,
+        width: '80%',
+        fontSize: 18,
+    },
+    withdrawContainer: {
+        width: '100%',
+        alignItems: 'center',
+    },
+    withdrawButton: {
+        backgroundColor: '#007BFF',
+        padding: 15,
+        borderRadius: 10,
+        width: '90%',
+        marginVertical: 10,
+        alignItems: 'center',
+    },
+    upiButton: {
+        backgroundColor: '#FF5722',
+    },
+    buttonText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'white',
+    },
+    transactionTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginTop: 30,
+        marginBottom: 10,
+    },
+    transactionCard: {
+        backgroundColor: 'white',
+        padding: 15,
+        borderRadius: 10,
+        marginBottom: 10,
+        width: '100%',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 5,
+    },
+    transactionText: {
+        fontSize: 16,
+    }
 });
 
-export default LanguageSupport;
+export default Wallet;
