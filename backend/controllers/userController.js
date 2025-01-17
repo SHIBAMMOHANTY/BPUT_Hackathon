@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 // Create a new user
 exports.createUser = async (req, res) => {
     try {
-        const { fullname, email, password,role,disabilityType } = req.body;
-        const newUser = new User({ fullname, email, password,role,disabilityType });
+        const { fullname, email,phone, password,role,disabilityType } = req.body;
+        const newUser = new User({ fullname, email,phone, password,role,disabilityType });
         await newUser.save();
         res.status(201).json({ message: 'User created successfully', user: newUser });
     } catch (err) {
@@ -40,13 +40,13 @@ exports.getUserById = async (req, res) => {
 // Update a user
 exports.updateUser = async (req, res) => {
     const { id } = req.params; // Extract the user ID from the request parameters
-    const { fullname, phone, email, password, disabilityType } = req.body; // Extract fields from the request body
+    const { fullname, phone, email,profilePicture, password, disabilityType } = req.body; // Extract fields from the request body
 
     try {
         // Find the user by ID and update it
         const updatedUser = await User.findByIdAndUpdate(
             id,
-            { fullname, phone, email, password, disabilityType },
+            { fullname, phone, email,profilePicture, password, disabilityType },
             { new: true, runValidators: true } // `new` returns the updated document; `runValidators` ensures schema validation
         );
 
@@ -78,11 +78,16 @@ exports.deleteUser = async (req, res) => {
 
 // Login a user
 exports.loginUser = async (req, res) => {
-    const { email, password } = req.body;
+    const { email,phone, password } = req.body;
 
     try {
         // Find the user by email
-        const user = await User.findOne({ email });
+        const user = await User.findOne({
+            $or: [
+                { email },
+                { phone }
+            ]
+        });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }

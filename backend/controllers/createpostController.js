@@ -44,7 +44,7 @@ exports.createPost = async (req, res) => {
 
 exports.getPosts = async (req, res) => {
     try {
-        const posts = await createpostmodal.find();
+        const posts = await createpostmodal.find().limit(6);
         res.status(200).json(posts);
     } catch (err) {
         res.status(500).json({ message: 'Failed to fetch posts', error: err.message });
@@ -112,30 +112,6 @@ exports.deletePost = async (req, res) => {
         res.status(500).json({ message: 'Failed to delete post', error: err.message });
     }
 };
-
-// Like post
-exports.likePost = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const post = await createpostmodal.findById(id);
-        if (!post) {
-            return res.status(404).json({ message: 'Post not found' });
-        }
-
-        // Check if user already liked the post
-        if (post.likes.includes(req.user._id)) {
-            return res.status(400).json({ message: 'You already liked this post' });
-        }
-
-        post.likes.push(req.user._id);
-        await post.save();
-
-        res.status(200).json({ message: 'Post liked successfully', post });
-    } catch (err) {
-        res.status(500).json({ message: 'Failed to like post', error: err.message });
-    }
-};
-
 // Message route
 
 exports.addCommentToPost = async (req, res) => {
@@ -182,3 +158,25 @@ exports.addCommentToPost = async (req, res) => {
     }
 };
 
+// Like post
+exports.likePost = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const post = await createpostmodal.findById(id);
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        // Check if user already liked the post
+        if (post.likes.includes(req.user._id)) {
+            return res.status(400).json({ message: 'You already liked this post' });
+        }
+
+        post.likes.push(req.user._id);
+        await post.save();
+
+        res.status(200).json({ message: 'Post liked successfully', post });
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to like post', error: err.message });
+    }
+};

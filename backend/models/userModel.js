@@ -7,22 +7,21 @@ const userSchema = new mongoose.Schema({
     },
     phone: {
         type: String,
-      
+        required: true,
+        unique: true,
     },
     email: {
         type: String,
         required: true,
         unique: true,
     },
- 
     password: {
         type: String,
         required: true,
     },
-  
-    createdAt: {
-        type: Date,
-        default: Date.now,
+    profilePicture: {
+        type: String,
+        default: 'default.jpg',
     },
     role: {
         type: String,
@@ -42,6 +41,10 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'CreatePost', // Posts the user liked
     }],
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 const User = mongoose.model('User', userSchema);
