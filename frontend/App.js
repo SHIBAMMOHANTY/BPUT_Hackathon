@@ -20,7 +20,7 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Wallet from './pages/LanguageSupport';
 // import Verify from './pages/VerifyDashBoard';
-// import ProposalForm from './pages/Proposal';
+import ProposalForm from './pages/Proposal';
 // import PartnershipPortal from './pages/PartnershipPortal';
 // import KnowledgeHub from './pages/KnowledgeHub';
 import EventPlatform from './pages/EventPlatform';
@@ -161,13 +161,13 @@ const DrawerNavigator = () => {
           </View>
         )}
       </Drawer.Screen>
-      {/* <Drawer.Screen name="Proposal">
+      <Drawer.Screen name="Proposal">
         {() => (
           <View style={styles.screen}>
             <ProposalForm />
           </View>
         )}
-      </Drawer.Screen> */}
+      </Drawer.Screen> 
       {/* <Drawer.Screen name="Verify">
         {() => (
           <View style={styles.screen}>
