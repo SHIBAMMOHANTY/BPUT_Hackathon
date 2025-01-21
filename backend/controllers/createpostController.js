@@ -13,7 +13,7 @@ const checkRole = (role) => {
 
 exports.createPost = async (req, res) => {
     try {
-        const { title, description, media, mediaType, requiredAmount, company, location, salary, role,userId } = req.body;
+        const { title, description, media, mediaType, requiredAmount,raisedAmount, company, location, salary, role,userId } = req.body;
 
         // Validate the role input
         if (!role || !['business', 'ngo', 'user'].includes(role)) {
@@ -32,7 +32,7 @@ exports.createPost = async (req, res) => {
             mediaType,
             location,
             userId,
-            ...(role === 'business' || role === 'ngo' ? { requiredAmount, company, salary } : {}),
+            ...(role === 'business' || role === 'ngo' ? { requiredAmount,raisedAmount:raisedAmount || 0, company, salary } : {}),
         });
 
         await newPost.save();

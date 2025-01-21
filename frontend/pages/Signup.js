@@ -7,6 +7,7 @@ import axios from 'axios';
 const SignupScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone,setphone]=useState('')
   const [role, setRole] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -28,13 +29,14 @@ const SignupScreen = ({ navigation }) => {
     // Prepare the data to send in the POST request
     const userData = JSON.stringify({
       fullname: name,
+      phone:phone,
       email: email,
       password: password,
       role: role,
       disabilityType: disabilityType
     });
-console.log(userData)
-console.log(userData)
+// console.log(userData)
+// console.log(userData)
     // Axios request configuration
     const config = {
       method: 'post',
@@ -54,6 +56,7 @@ console.log(userData)
 
       // Reset form fields after successful signup
       setName('');
+      setphone('')
       setEmail('');
       setPassword('');
       setConfirmPassword('');
@@ -79,6 +82,13 @@ console.log(userData)
         value={name}
         onChangeText={setName}
         autoCapitalize="words"
+      />
+       <TextInput
+        style={styles.input}
+        placeholder="Phone Number"
+        value={phone}
+        onChangeText={setphone}
+      
       />
       <TextInput
         style={styles.input}
