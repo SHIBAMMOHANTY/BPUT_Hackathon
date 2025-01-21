@@ -28,6 +28,9 @@ const createpostSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    raisedAmount:{
+        type: Number,  
+    },
     company: {
         type: String,
         required: true,
