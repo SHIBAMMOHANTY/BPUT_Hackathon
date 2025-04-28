@@ -5,49 +5,69 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const BASE_URL = "http://192.168.202.149:5001"; // Use your deployed server URL
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Validation Error", "Please fill in both email and password.");
+      return;
+    }
+
     setLoading(true);
-    setError("");
 
     const data = {
-      email: email,
+      email: email.trim(),
       password: password,
     };
-    console.log(data);
+
     try {
       const response = await axios.post(
-        "https://ebizaapi-production.up.railway.app/api/users/login",
+        `${BASE_URL}/api/users/login`,
         data,
         {
           headers: {
             "Content-Type": "application/json",
           },
+          timeout: 10000, // 10 seconds timeout
         }
       );
-      
-      const token = response.data.token;
-      const user = response.data.user; // assuming token is returned in response.data.token
-   
+
+      const { token, user } = response.data;
+
       await AsyncStorage.setItem("authToken", token);
-      await AsyncStorage.setItem("user", JSON.stringify(user)); // Save token in AsyncStorage
-      
+      await AsyncStorage.setItem("user", JSON.stringify(user));
+
       setLoading(false);
+
       // Redirect to home page
       navigation.navigate("Drawer");
     } catch (error) {
       setLoading(false);
-      setError("Login failed. Please check your credentials.");
-      console.error("Login error:", error);
+
+      if (error.response) {
+        // Server responded but not 2xx
+        console.error('Server Error:', error.response.data);
+        Alert.alert("Login Error", error.response.data.message || "Invalid credentials");
+      } else if (error.request) {
+        // Request was made but no response
+        console.error('Network Error:', error.message);
+        Alert.alert("Network Error", "Unable to reach the server. Please try again later.");
+      } else {
+        // Something else
+        console.error('Error:', error.message);
+        Alert.alert("Error", "Something went wrong. Please try again.");
+      }
     }
   };
 
@@ -60,6 +80,7 @@ const Login = ({ navigation }) => {
         style={styles.input}
         placeholder="Email"
         keyboardType="email-address"
+        autoCapitalize="none"
         value={email}
         onChangeText={setEmail}
       />
@@ -73,18 +94,17 @@ const Login = ({ navigation }) => {
         onChangeText={setPassword}
       />
 
-      {/* Error message */}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-
       {/* Login Button */}
       <TouchableOpacity
         style={styles.button}
         onPress={handleLogin}
         disabled={loading}
       >
-        <Text style={styles.buttonText}>
-          {loading ? "Logging in..." : "Login"}
-        </Text>
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Login</Text>
+        )}
       </TouchableOpacity>
 
       {/* Navigate to Signup */}
@@ -109,24 +129,26 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "bold",
     marginBottom: 20,
   },
   input: {
     width: "100%",
-    padding: 10,
-    marginVertical: 10,
+    padding: 12,
+    marginVertical: 8,
     borderColor: "#ccc",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 8,
   },
   button: {
     backgroundColor: "#3498db",
-    paddingVertical: 12,
+    paddingVertical: 14,
     paddingHorizontal: 50,
     borderRadius: 30,
     marginTop: 20,
+    width: "100%",
+    alignItems: "center",
   },
   buttonText: {
     color: "#fff",
@@ -141,10 +163,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textDecorationLine: "underline",
     textAlign: "center",
-  },
-  error: {
-    color: "red",
-    marginTop: 10,
   },
 });
 
